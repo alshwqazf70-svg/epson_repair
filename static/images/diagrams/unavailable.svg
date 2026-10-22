@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="الصورة الفنية لهذا الجزء غير متاحة بعد">
+  <rect width="640" height="360" fill="#f2f4f7"/>
+  <rect x="30" y="30" width="580" height="300" rx="16" fill="#ffffff" stroke="#c8d2e0" stroke-width="2" stroke-dasharray="8 6"/>
+  <circle cx="320" cy="150" r="42" fill="#eef3f9" stroke="#9fb4cc" stroke-width="2"/>
+  <text x="320" y="160" text-anchor="middle" font-family="sans-serif" font-size="34" fill="#7b8ca0">؟</text>
+  <text x="320" y="225" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#12395c" direction="rtl">الصورة الفنية لهذا الجزء غير متاحة بعد</text>
+  <text x="320" y="258" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#5a6b7d" direction="rtl">لا نختلق صوراً للموديل؛ يمكنك رفع صورتك الخاصة من لوحة الإدارة</text>
+</svg>

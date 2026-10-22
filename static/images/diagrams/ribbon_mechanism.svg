@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" aria-label="مخطط توضيحي لآلية الشريط الحبري">
+  <rect width="720" height="380" fill="#f6f8fb"/>
+  <rect x="40" y="40" width="640" height="300" rx="14" fill="#ffffff" stroke="#c8d2e0" stroke-width="2"/>
+  <text x="360" y="28" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#12395c" direction="rtl">مخطط توضيحي: آلية الشريط الحبري</text>
+  <path d="M150 170 C260 120 460 120 570 170 C460 220 260 220 150 170 Z" fill="#e7ecf3" stroke="#5b6f86" stroke-width="3"/>
+  <text x="360" y="168" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#12395c">مسار الشريط حول رأس الطباعة</text>
+  <circle cx="150" cy="170" r="26" fill="#ffffff" stroke="#1f7a8c" stroke-width="2"/>
+  <circle cx="570" cy="170" r="26" fill="#ffffff" stroke="#1f7a8c" stroke-width="2"/>
+  <text x="150" y="225" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#0f5c6b">بكرة</text>
+  <text x="570" y="225" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#0f5c6b">بكرة</text>
+  <rect x="320" y="140" width="80" height="60" rx="8" fill="#ffe9c7" stroke="#c98a2b"/>
+  <text x="360" y="175" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7a4f07">الرأس</text>
+  <text x="360" y="300" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#5a6b7d">الشريط يمر بين رأس الطباعة والورق ويتحرك باستمرار</text>
+  <text x="360" y="325" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#a03030">رسم توضيحي غير مطابق بالضرورة للبنية الداخلية الدقيقة</text>
+</svg>

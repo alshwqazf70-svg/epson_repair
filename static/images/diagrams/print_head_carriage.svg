@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" aria-label="مخطط توضيحي لرأس الطباعة وعربة الحركة">
+  <rect width="720" height="380" fill="#f6f8fb"/>
+  <rect x="40" y="40" width="640" height="300" rx="14" fill="#ffffff" stroke="#c8d2e0" stroke-width="2"/>
+  <text x="360" y="28" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#12395c" direction="rtl">مخطط توضيحي: رأس الطباعة وعربة الحركة</text>
+  <line x1="90" y1="200" x2="630" y2="200" stroke="#7b8ca0" stroke-width="6"/>
+  <text x="360" y="180" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#5a6b7d">قضيب التوجيه</text>
+  <rect x="300" y="150" width="120" height="90" rx="10" fill="#ffe9c7" stroke="#c98a2b" stroke-width="2"/>
+  <text x="360" y="190" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#7a4f07">عربة الحركة</text>
+  <text x="360" y="212" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7a4f07">ورأس الطباعة</text>
+  <path d="M180 260 H300" stroke="#1f7a8c" stroke-width="5" marker-end="url(#c)"/>
+  <path d="M540 260 H420" stroke="#1f7a8c" stroke-width="5" marker-end="url(#c)"/>
+  <text x="240" y="285" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f5c6b">حركة أفقية</text>
+  <text x="480" y="285" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f5c6b">حركة أفقية</text>
+  <text x="360" y="325" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#a03030">رسم توضيحي غير مطابق بالضرورة للبنية الداخلية الدقيقة</text>
+  <defs><marker id="c" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1f7a8c"/></marker></defs>
+</svg>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-label="مخطط توضيحي لنقاط التنظيف والصيانة">
+  <rect width="720" height="400" fill="#f6f8fb"/>
+  <rect x="40" y="40" width="640" height="320" rx="14" fill="#ffffff" stroke="#c8d2e0" stroke-width="2"/>
+  <text x="360" y="28" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#12395c" direction="rtl">نقاط التنظيف المسموح بها والمحظورة</text>
+  <rect x="80" y="90" width="250" height="200" rx="12" fill="#eaf7ee" stroke="#3f8f5b" stroke-width="2"/>
+  <text x="205" y="120" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1f6b39">مسموح للمستخدم</text>
+  <text x="95" y="155" font-family="sans-serif" font-size="13" fill="#1f6b39">• الغلاف الخارجي</text>
+  <text x="95" y="185" font-family="sans-serif" font-size="13" fill="#1f6b39">• فتحات التهوية الخارجية</text>
+  <text x="95" y="215" font-family="sans-serif" font-size="13" fill="#1f6b39">• مسار الورق الظاهر</text>
+  <text x="95" y="245" font-family="sans-serif" font-size="13" fill="#1f6b39">• سطح الأسطوانة الخارجي</text>
+  <text x="95" y="275" font-family="sans-serif" font-size="12" fill="#1f6b39">بقطعة قماش جافة فقط</text>
+  <rect x="390" y="90" width="250" height="200" rx="12" fill="#fdecec" stroke="#b03a3a" stroke-width="2"/>
+  <text x="515" y="120" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#8f2020">يحتاج فنياً مؤهلاً</text>
+  <text x="405" y="155" font-family="sans-serif" font-size="13" fill="#8f2020">• رأس الطباعة والإبر</text>
+  <text x="405" y="185" font-family="sans-serif" font-size="13" fill="#8f2020">• الحزام والتروس والمحركات</text>
+  <text x="405" y="215" font-family="sans-serif" font-size="13" fill="#8f2020">• اللوحة ومصدر الطاقة</text>
+  <text x="405" y="245" font-family="sans-serif" font-size="13" fill="#8f2020">• أي قياس كهربائي</text>
+  <text x="405" y="275" font-family="sans-serif" font-size="12" fill="#8f2020">لا تفتح ولا تقس</text>
+  <text x="360" y="345" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#a03030">رسم توضيحي غير مطابق بالضرورة للبنية الداخلية الدقيقة</text>
+</svg>

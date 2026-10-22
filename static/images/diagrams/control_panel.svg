@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" aria-label="مخطط توضيحي لهيكل لوحة التحكم">
+  <rect width="720" height="340" fill="#f6f8fb"/>
+  <rect x="40" y="40" width="640" height="250" rx="14" fill="#ffffff" stroke="#c8d2e0" stroke-width="2"/>
+  <text x="360" y="28" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#12395c" direction="rtl">هيكل عام للوحة التحكم</text>
+  <rect x="90" y="110" width="110" height="46" rx="8" fill="#eef3f9" stroke="#9fb4cc"/>
+  <text x="145" y="139" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#12395c">مؤشر الطاقة</text>
+  <rect x="230" y="110" width="110" height="46" rx="8" fill="#eef3f9" stroke="#9fb4cc"/>
+  <text x="285" y="139" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#12395c">مؤشر الجاهزية</text>
+  <rect x="370" y="110" width="110" height="46" rx="8" fill="#eef3f9" stroke="#9fb4cc"/>
+  <text x="425" y="139" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#12395c">مؤشر الورق</text>
+  <rect x="510" y="110" width="110" height="46" rx="8" fill="#eef3f9" stroke="#9fb4cc"/>
+  <text x="565" y="139" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#12395c">إيقاف مؤقت</text>
+  <rect x="90" y="200" width="160" height="46" rx="8" fill="#fff8e8" stroke="#c98a2b"/>
+  <text x="170" y="229" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7a4f07">زر تغذية الورق</text>
+  <rect x="290" y="200" width="160" height="46" rx="8" fill="#fff8e8" stroke="#c98a2b"/>
+  <text x="370" y="229" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7a4f07">زر تغذية السطر</text>
+  <rect x="490" y="200" width="130" height="46" rx="8" fill="#fff8e8" stroke="#c98a2b"/>
+  <text x="555" y="229" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7a4f07">أزرار أخرى</text>
+  <text x="360" y="292" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#8f2020">تخطيط الأزرار يختلف بين الطرازين — تحقق من دليل المستخدم</text>
+  <text x="360" y="318" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#8f2020">رسم توضيحي غير مطابق بالضرورة للبنية الداخلية الدقيقة</text>
+</svg>
