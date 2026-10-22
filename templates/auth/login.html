@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}دخول المالك — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> دخول المالك</nav>
+{% endblock %}
+{% block content %}
+<div class="card" style="max-width:480px;margin:auto">
+  <h1 class="section-title">دخول المالك</h1>
+  <div class="notice info">
+    هذه موسوعة خاصة: لا يوجد تسجيل عام، ولا يمكن لأي زائر إنشاء حساب أو تعديل المحتوى.
+  </div>
+  <form method="post" action="{{ url_for('auth.login') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="username">اسم المستخدم</label>
+    <input type="text" id="username" name="username" required autocomplete="username"
+           value="{{ form.username.data or '' }}">
+    {% for err in form.username.errors %}<p class="field-errors">{{ err }}</p>{% endfor %}
+
+    <label for="password">كلمة المرور</label>
+    <input type="password" id="password" name="password" required autocomplete="current-password">
+    {% for err in form.password.errors %}<p class="field-errors">{{ err }}</p>{% endfor %}
+
+    <div class="btn-row">
+      <button class="btn btn-primary" type="submit">دخول</button>
+      <a class="btn" href="{{ url_for('public.index') }}">العودة للرئيسية</a>
+    </div>
+  </form>
+  <p class="help" style="margin-top:14px">
+    نسيت كلمة المرور؟ استخدم <code>python3 tools/create_admin.py</code> على الخادم لتعيين كلمة مرور جديدة.
+  </p>
+</div>
+{% endblock %}
