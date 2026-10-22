@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}سجل التعديلات — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span> سجل التعديلات</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">سجل التعديلات والنشاطات</h1>
+
+<div class="notice info">يُسجّل هنا كل إنشاء أو تعديل أو حذف أو نسخ احتياطي أو دخول. لا تُخزّن كلمات المرور في هذا السجل.</div>
+
+{% if pagination.items %}
+  <table class="data">
+    <thead><tr><th>الوقت</th><th>المستخدم</th><th>الإجراء</th><th>الكيان</th><th>المعرّف</th><th>التفاصيل</th><th>IP</th></tr></thead>
+    <tbody>
+      {% for entry in pagination.items %}
+        <tr>
+          <td>{{ entry.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ entry.username or '—' }}</td>
+          <td>{{ {'create':'إنشاء','update':'تعديل','delete':'حذف','login':'دخول','logout':'خروج','backup':'نسخ احتياطي','restore':'استعادة','export':'تصدير','password':'تغيير كلمة المرور','login_failed':'محاولة دخول فاشلة'}.get(entry.action, entry.action) }}</td>
+          <td>{{ entry.entity or '—' }}</td>
+          <td>{{ entry.entity_id if entry.entity_id else '—' }}</td>
+          <td>{{ entry.details or '—' }}</td>
+          <td>{{ entry.ip or '—' }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if pagination.pages > 1 %}
+    <nav class="pagination">
+      {% if pagination.has_prev %}<a href="{{ url_for('admin.activity', page=pagination.prev_num) }}">السابق</a>{% endif %}
+      <span>صفحة {{ pagination.page }} من {{ pagination.pages }}</span>
+      {% if pagination.has_next %}<a href="{{ url_for('admin.activity', page=pagination.next_num) }}">التالي</a>{% endif %}
+    </nav>
+  {% endif %}
+{% else %}
+  <div class="empty">لا يوجد نشاط مسجل بعد.</div>
+{% endif %}
+{% endblock %}

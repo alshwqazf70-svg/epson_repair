@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}سجل الصيانة — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span> سجل الصيانة</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">سجل الصيانة والعمليات</h1>
+
+<div class="notice info">
+  هذا السجل خاص بك ولا يظهر للزوار. الصور المرفقة محفوظة خارج <code>static</code>
+  ولا تُفتح إلا داخل جلسة مسجلة الدخول.
+</div>
+
+<div class="btn-row">
+  <a class="btn btn-primary btn-sm" href="{{ url_for('admin.log_new') }}">تسجيل عملية جديدة</a>
+  <a class="btn btn-sm" href="{{ url_for('admin.export') }}">تصدير JSON</a>
+</div>
+
+<form class="card no-print" method="get" action="{{ url_for('admin.logs') }}">
+  <div class="grid grid-3">
+    <div class="field">
+      <label for="q">بحث في العنوان أو الأعراض أو الإصلاح</label>
+      <input type="search" id="q" name="q" value="{{ q }}">
+    </div>
+    <div class="field">
+      <label for="model_id">الموديل</label>
+      <select name="model_id" id="model_id">
+        <option value="0">كل الموديلات</option>
+        {% for m in models %}
+          <option value="{{ m.id }}" {% if model_id == m.id %}selected{% endif %}>{{ m.name_ar }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="result">النتيجة</label>
+      <select name="result" id="result">
+        <option value="">كل النتائج</option>
+        <option value="success" {% if result == 'success' %}selected{% endif %}>نجح الإصلاح</option>
+        <option value="partial" {% if result == 'partial' %}selected{% endif %}>نجاح جزئي</option>
+        <option value="failed" {% if result == 'failed' %}selected{% endif %}>لم ينجح</option>
+        <option value="unknown" {% if result == 'unknown' %}selected{% endif %}>غير محدد</option>
+      </select>
+    </div>
+  </div>
+  <div class="btn-row"><button class="btn btn-sm" type="submit">تصفية</button>
+    <a class="btn btn-sm" href="{{ url_for('admin.logs') }}">إزالة التصفية</a></div>
+</form>
+
+{% if pagination.items %}
+  <table class="data">
+    <thead>
+      <tr>
+        <th>التاريخ</th>
+        <th>العنوان</th>
+        <th>الموديل</th>
+        <th>النتيجة</th>
+        <th>صور</th>
+        <th>إجراءات</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in pagination.items %}
+        <tr>
+          <td>{{ entry.log_date.strftime('%Y-%m-%d') if entry.log_date else '—' }}</td>
+          <td><a href="{{ url_for('admin.log_view', log_id=entry.id) }}">{{ entry.title }}</a>
+            {% if entry.symptoms %}<br><span class="meta">{{ entry.symptoms[:90] }}</span>{% endif %}</td>
+          <td>{{ entry.model.name_ar if entry.model else '—' }}</td>
+          <td>
+            <span class="badge {% if entry.result == 'success' %}ok{% elif entry.result == 'failed' %}danger{% elif entry.result == 'partial' %}warn{% else %}info{% endif %}">
+              {{ entry.result_label }}</span>
+          </td>
+          <td>{{ entry.attachments.count() }}</td>
+          <td>
+            <a class="btn btn-sm" href="{{ url_for('admin.log_view', log_id=entry.id) }}">عرض</a>
+            <a class="btn btn-sm" href="{{ url_for('admin.log_edit', log_id=entry.id) }}">تعديل</a>
+            <a class="btn btn-sm" href="{{ url_for('admin.log_print', log_id=entry.id) }}" target="_blank">طباعة</a>
+            <form method="post" action="{{ url_for('admin.log_delete', log_id=entry.id) }}" class="inline-form" data-confirm="حذف السجل نهائياً؟">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-danger" type="submit">حذف</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if pagination.pages > 1 %}
+    <nav class="pagination">
+      {% if pagination.has_prev %}<a href="{{ url_for('admin.logs', page=pagination.prev_num, q=q, model_id=model_id, result=result) }}">السابق</a>{% endif %}
+      <span>صفحة {{ pagination.page }} من {{ pagination.pages }}</span>
+      {% if pagination.has_next %}<a href="{{ url_for('admin.logs', page=pagination.next_num, q=q, model_id=model_id, result=result) }}">التالي</a>{% endif %}
+    </nav>
+  {% endif %}
+{% else %}
+  <div class="empty">لا توجد سجلات صيانة مطابقة. سجّل أول عملية صيانة لبناء مرجعك الشخصي.</div>
+{% endif %}
+{% endblock %}

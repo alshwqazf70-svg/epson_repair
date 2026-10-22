@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}الموديلات — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span> الموديلات</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">موديلات الطابعات</h1>
+
+<div class="notice info">
+  الإصدار الأول يحتوي موديلين فقط (LX-350 و FX-890). يمكنك إضافة موديلات جديدة لاحقاً،
+  ويجب إدخال المواصفات من مرجع موثوق فقط.
+</div>
+
+<div class="btn-row">
+  <a class="btn btn-primary btn-sm" href="{{ url_for('admin.model_new') }}">إضافة موديل</a>
+  <a class="btn btn-sm" href="{{ url_for('public.models') }}">عرض صفحة الموديلات</a>
+</div>
+
+{% if models %}
+  <table class="data">
+    <thead>
+      <tr>
+        <th>الاسم بالعربية</th>
+        <th>الاسم التقني</th>
+        <th>الفئة</th>
+        <th>الإبر</th>
+        <th>شريط الحبر</th>
+        <th>الحالة</th>
+        <th>إجراءات</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in models %}
+        <tr>
+          <td><a href="{{ url_for('admin.model_edit', model_id=m.id) }}">{{ m.name_ar }}</a></td>
+          <td>{{ m.name_en }}</td>
+          <td>{{ m.printer_class or '—' }}</td>
+          <td>{{ m.pins or '—' }}</td>
+          <td>{{ m.ribbon_part or '—' }}</td>
+          <td>{% if m.is_active %}<span class="badge ok">مفعّل</span>{% else %}<span class="badge warn">موقوف</span>{% endif %}</td>
+          <td>
+            <a class="btn btn-sm" href="{{ url_for('admin.model_edit', model_id=m.id) }}">تعديل</a>
+            <a class="btn btn-sm" href="{{ url_for('public.model_detail', slug=m.slug) }}">صفحة عامة</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="empty">لا يوجد موديلات بعد. أضف موديلاً للبدء.</div>
+{% endif %}
+{% endblock %}

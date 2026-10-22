@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "partials/forms.html" as f %}
+{% block title %}{% if note %}تعديل ملاحظة{% else %}ملاحظة جديدة{% endif %} — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span>
+    <a href="{{ url_for('admin.notes') }}">الملاحظات</a><span>/</span>
+    {% if note %}تعديل{% else %}جديدة{% endif %}</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">{% if note %}تعديل الملاحظة{% else %}ملاحظة جديدة{% endif %}</h1>
+
+<form method="post">
+  {{ f.csrf_hidden() }}
+  <div class="card fault-section">
+    {{ f.render_field(form.title) }}
+    {{ f.render_field(form.model_id) }}
+    {{ f.render_field(form.body, rows=10) }}
+  </div>
+  {{ f.submit('حفظ الملاحظة', url_for('admin.notes')) }}
+</form>
+{% endblock %}

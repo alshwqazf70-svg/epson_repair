@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}الصور والمخططات — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span> الصور والمخططات</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">الصور والمخططات</h1>
+
+<div class="notice info">
+  الملفات المرفوعة تُحفظ خارج مجلد <code>static</code> ولا تُعرض إلا بعد تسجيل الدخول.
+  الرسوم المرفقة مع المشروع توضيحية وموسومة بعبارة «رسم توضيحي غير مطابق بالضرورة للبنية الداخلية الدقيقة».
+</div>
+
+<div class="btn-row">
+  <a class="btn btn-primary btn-sm" href="{{ url_for('admin.image_new') }}">رفع صورة/مخطط</a>
+  <a class="btn btn-sm" href="{{ url_for('public.gallery') }}">المعرض العام</a>
+</div>
+
+{% if images %}
+  <table class="data">
+    <thead>
+      <tr>
+        <th>معاينة</th>
+        <th>العنوان</th>
+        <th>النوع</th>
+        <th>الموديل</th>
+        <th>العطل المرتبط</th>
+        <th>المصدر</th>
+        <th>التخزين</th>
+        <th>إجراءات</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for img in images %}
+        <tr>
+          <td>
+            {% if img.storage == 'bundled' %}
+              <img src="{{ url_for('static', filename='images/' + img.filename) }}" alt="{{ img.title }}" style="width:72px;height:auto">
+            {% else %}
+              <img src="{{ url_for('media.private_media', rel_path=img.filename) }}" alt="{{ img.title }}" style="width:72px;height:auto">
+            {% endif %}
+          </td>
+          <td>
+            <strong>{{ img.title }}</strong>
+            {% if img.description %}<br><span class="meta">{{ img.description }}</span>{% endif %}
+            {% if img.step_hint %}<br><span class="meta">الخطوة/القطعة: {{ img.step_hint }}</span>{% endif %}
+          </td>
+          <td>
+            <span class="badge {% if img.is_original %}ok{% else %}warn{% endif %}">{% if img.is_original %}أصلية{% else %}توضيحية{% endif %}</span><br>
+            <span class="meta">{{ {'photo':'صورة','diagram':'مخطط','panel':'لوحة تحكم'}.get(img.image_type, img.image_type) }}</span>
+          </td>
+          <td>{{ img.model.name_ar if img.model else '— عام —' }}</td>
+          <td>{% if img.fault %}<a href="{{ url_for('public.fault_detail', slug=img.fault.slug) }}">{{ img.fault.title_ar }}</a>{% else %}—{% endif %}</td>
+          <td>{{ img.source or '—' }}{% if img.license_note %}<br><span class="meta">{{ img.license_note }}</span>{% endif %}</td>
+          <td>{{ 'مرفق' if img.storage == 'bundled' else 'مرفوع' }}</td>
+          <td>
+            <form method="post" action="{{ url_for('admin.image_delete', image_id=img.id) }}" class="inline-form" data-confirm="سيتم حذف الصورة نهائياً. هل أنت متأكد؟">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-danger" type="submit">حذف</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="empty">لا توجد صور بعد. ارفع صورك الخاصة أو استخدم الرسوم التوضيحية المرفقة.</div>
+{% endif %}
+{% endblock %}

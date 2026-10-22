@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}الملاحظات — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span> الملاحظات</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">ملاحظات الصيانة الشخصية</h1>
+
+<div class="notice info">ملاحظاتك الخاصة لا تظهر للزوار، وتبقى ضمن قاعدة بياناتك ونسخك الاحتياطية.</div>
+
+<div class="btn-row"><a class="btn btn-primary btn-sm" href="{{ url_for('admin.note_new') }}">ملاحظة جديدة</a></div>
+
+{% if notes %}
+  <div class="grid grid-2">
+    {% for note in notes %}
+      <article class="card">
+        <h3><a href="{{ url_for('admin.note_edit', note_id=note.id) }}">{{ note.title }}</a></h3>
+        {% if note.model %}<p class="meta">الموديل: {{ note.model.name_ar }}</p>{% endif %}
+        <p class="meta">آخر تحديث: {{ note.updated_at.strftime('%Y-%m-%d') }}</p>
+        <div class="prose">{{ note.body or '' }}</div>
+        <div class="btn-row">
+          <a class="btn btn-sm" href="{{ url_for('admin.note_edit', note_id=note.id) }}">تعديل</a>
+          <form method="post" action="{{ url_for('admin.note_delete', note_id=note.id) }}" class="inline-form" data-confirm="حذف الملاحظة؟">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-danger" type="submit">حذف</button>
+          </form>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty">لا توجد ملاحظات بعد.</div>
+{% endif %}
+{% endblock %}

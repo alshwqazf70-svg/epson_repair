@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% import "partials/forms.html" as f %}
+{% block title %}لوحة الإدارة — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> لوحة الإدارة</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">لوحة الإدارة الخاصة</h1>
+
+<div class="notice info">
+  أنت مسجل الدخول بصفة المالك. كل العمليات هنا محمية على الخادم ولا يمكن الوصول إليها بدون جلسة صالحة.
+</div>
+
+<section class="section">
+  <div class="grid grid-4">
+    <div class="card"><h3>الأعطال</h3><p style="font-size:1.5rem;margin:0">{{ stats.faults }}</p>
+      <p class="meta">منشورة {{ stats.published }} · مراجعة {{ stats.review }} · مسودة {{ stats.draft }}</p></div>
+    <div class="card"><h3>تحتاج تحققاً</h3><p style="font-size:1.5rem;margin:0">{{ stats.unverified }}</p></div>
+    <div class="card"><h3>الموديلات</h3><p style="font-size:1.5rem;margin:0">{{ stats.models }}</p></div>
+    <div class="card"><h3>سجلات الصيانة</h3><p style="font-size:1.5rem;margin:0">{{ stats.logs }}</p></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="grid grid-2">
+    <article class="card">
+      <h3>عدد الأعطال حسب الموديل</h3>
+      <table class="data">
+        <tbody>
+          {% for row in per_model %}<tr><td>{{ row.model.name_ar }}</td><td>{{ row.count }}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </article>
+    <article class="card">
+      <h3>عدد الأعطال حسب التصنيف</h3>
+      <table class="data">
+        <tbody>
+          {% for name, count in per_category %}<tr><td>{{ name }}</td><td>{{ count }}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">إجراءات سريعة</h2>
+  <div class="btn-row">
+    <a class="btn btn-primary btn-sm" href="{{ url_for('admin.fault_new') }}">إضافة عطل</a>
+    <a class="btn btn-sm" href="{{ url_for('admin.faults') }}">إدارة الأعطال</a>
+    <a class="btn btn-sm" href="{{ url_for('admin.models') }}">الموديلات</a>
+    <a class="btn btn-sm" href="{{ url_for('admin.categories') }}">التصنيفات</a>
+    <a class="btn btn-sm" href="{{ url_for('admin.image_new') }}">رفع صورة</a>
+    <a class="btn btn-sm" href="{{ url_for('admin.reference_new') }}">إضافة مرجع</a>
+    <a class="btn btn-sm" href="{{ url_for('admin.log_new') }}">تسجيل صيانة</a>
+    <a class="btn btn-sm" href="{{ url_for('admin.note_new') }}">ملاحظة جديدة</a>
+    <a class="btn btn-sm" href="{{ url_for('admin.backups') }}">النسخ الاحتياطي</a>
+    <a class="btn btn-sm" href="{{ url_for('admin.activity') }}">سجل التعديلات</a>
+    <a class="btn btn-sm" href="{{ url_for('admin.export') }}">تصدير JSON</a>
+    <a class="btn btn-sm" href="{{ url_for('admin.search') }}">بحث الإدارة</a>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">آخر التعديلات</h2>
+  {% if recent_activity %}
+    <table class="data">
+      <thead><tr><th>الوقت</th><th>المستخدم</th><th>الإجراء</th><th>الكيان</th><th>التفاصيل</th></tr></thead>
+      <tbody>
+        {% for entry in recent_activity %}
+          <tr>
+            <td>{{ entry.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{{ entry.username }}</td>
+            <td>{{ entry.action }}</td>
+            <td>{{ entry.entity }}</td>
+            <td>{{ entry.details }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty">لا يوجد نشاط مسجل بعد.</div>
+  {% endif %}
+</section>
+{% endblock %}

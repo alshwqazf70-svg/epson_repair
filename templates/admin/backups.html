@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}النسخ الاحتياطي — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span> النسخ الاحتياطي</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">النسخ الاحتياطي والاستعادة</h1>
+
+<div class="notice info">
+  النسخة الاحتياطية تحتوي قاعدة البيانات وملفات <code>private_uploads</code> في أرشيف ZIP واحد.
+  احتفظ بها في مكان آمن خارج الخادم. الاستعادة تستبدل البيانات الحالية بالكامل.
+</div>
+
+<section class="card fault-section">
+  <h2>إنشاء نسخة جديدة</h2>
+  <form method="post" action="{{ url_for('admin.backup_create') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-primary" type="submit">إنشاء نسخة احتياطية الآن</button>
+  </form>
+</section>
+
+<section class="card fault-section">
+  <h2>النسخ الموجودة</h2>
+  {% if files %}
+    <table class="data">
+      <thead><tr><th>اسم الملف</th><th>الحجم</th><th>التاريخ</th><th>إجراءات</th></tr></thead>
+      <tbody>
+        {% for p in files %}
+          <tr>
+            <td>{{ p.name }}</td>
+            <td>{{ (p.stat().st_size / 1024) | round(1) }} كيلوبايت</td>
+            <td>{{ p.stat().st_mtime | int | datetimeformat }}</td>
+            <td><a class="btn btn-sm" href="{{ url_for('admin.backup_download', name=p.name) }}">تنزيل</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty">لا توجد نسخ احتياطية بعد. أنشئ نسخة الآن.</div>
+  {% endif %}
+</section>
+
+<section class="card fault-section">
+  <h2>الاستعادة من ملف</h2>
+  <div class="notice warn">الاستعادة تكتب فوق البيانات الحالية. أنشئ نسخة قبل الاستعادة إن لزم الأمر.</div>
+  <form method="post" action="{{ url_for('admin.backup_restore') }}" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field">
+      <label for="archive">ملف النسخة الاحتياطية (ZIP)</label>
+      <input type="file" id="archive" name="archive" accept=".zip">
+    </div>
+    <div class="btn-row"><button class="btn btn-danger" type="submit">استعادة</button></div>
+  </form>
+</section>
+
+<section class="card fault-section">
+  <h2>تصدير البيانات بصيغة JSON</h2>
+  <p class="help">تصدير كامل للموديلات والتصنيفات والأعطال وسجلات الصيانة والملاحظات.</p>
+  <div class="btn-row"><a class="btn btn-sm" href="{{ url_for('admin.export') }}">تنزيل ملف JSON</a></div>
+</section>
+{% endblock %}

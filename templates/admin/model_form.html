@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% import "partials/forms.html" as f %}
+{% block title %}{% if model %}تعديل موديل{% else %}إضافة موديل{% endif %} — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span>
+    <a href="{{ url_for('admin.models') }}">الموديلات</a><span>/</span>
+    {% if model %}تعديل{% else %}إضافة{% endif %}</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">{% if model %}تعديل: {{ model.name_ar }}{% else %}إضافة موديل جديد{% endif %}</h1>
+
+<div class="notice warn">
+  لا تُدخل مواصفة أو رقم قطعة إلا بعد التحقق منها من دليل المستخدم أو دليل الخدمة الرسمي.
+  الحقول الفارغة مقبولة وأفضل من معلومات غير موثقة.
+</div>
+
+<form method="post">
+  {{ f.csrf_hidden() }}
+  <div class="card fault-section">
+    <h2>المعلومات الأساسية</h2>
+    <div class="grid grid-2">
+      {{ f.render_field(form.name_ar) }}
+      {{ f.render_field(form.name_en) }}
+      {{ f.render_field(form.printer_class) }}
+      {{ f.render_field(form.pins) }}
+      {{ f.render_field(form.columns) }}
+      {{ f.render_field(form.interfaces) }}
+      {{ f.render_field(form.ribbon_part) }}
+      {{ f.render_field(form.ribbon_part_confidence) }}
+      {{ f.render_field(form.mtbf) }}
+      {{ f.render_field(form.print_head_life) }}
+      {{ f.render_field(form.memory) }}
+      {{ f.render_field(form.sort_order) }}
+    </div>
+    <div class="field">
+      <label for="{{ form.is_active.id }}">{{ form.is_active.label.text }}</label>
+      {{ form.is_active(id=form.is_active.id) }}
+    </div>
+  </div>
+
+  <div class="card fault-section">
+    <h2>الوصف والملاحظات</h2>
+    {{ f.render_field(form.paper_paths, rows=4) }}
+    {{ f.render_field(form.summary, rows=5) }}
+    {{ f.render_field(form.specs_note, rows=4, help_text='اكتب هنا ما لم يتم التحقق منه أو ما أخذ من صفحة طراز مقارب') }}
+  </div>
+
+  {{ f.submit('حفظ الموديل', url_for('admin.models')) }}
+</form>
+{% endblock %}

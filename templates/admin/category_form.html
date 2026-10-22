@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "partials/forms.html" as f %}
+{% block title %}{% if category %}تعديل تصنيف{% else %}إضافة تصنيف{% endif %} — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span>
+    <a href="{{ url_for('admin.categories') }}">التصنيفات</a></nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">{% if category %}تعديل تصنيف{% else %}إضافة تصنيف جديد{% endif %}</h1>
+<form method="post">
+  {{ f.csrf_hidden() }}
+  <div class="card">
+    <div class="grid grid-2">
+      {{ f.render_field(form.name_ar) }}
+      {{ f.render_field(form.name_en) }}
+      {{ f.render_field(form.icon) }}
+      {{ f.render_field(form.sort_order) }}
+    </div>
+    {{ f.render_field(form.description, rows=4) }}
+  </div>
+  {{ f.submit('حفظ', url_for('admin.categories')) }}
+</form>
+{% endblock %}

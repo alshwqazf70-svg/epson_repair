@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% import "partials/forms.html" as f %}
+{% block title %}{% if fault %}تعديل عطل{% else %}إضافة عطل{% endif %} — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span>
+    <a href="{{ url_for('admin.faults') }}">الأعطال</a><span>/</span>
+    {% if fault %}تعديل{% else %}إضافة{% endif %}</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">{% if fault %}تعديل: {{ fault.title_ar }}{% else %}إضافة عطل جديد{% endif %}</h1>
+
+<div class="notice info">
+  الحقول التي لا يتوفر لها مصدر موثوق يجب أن تُترك فارغة أو تُوسم بـ«يحتاج إلى تحقق».
+  لا تُدخل رقم قطعة أو قيمة كهربائية إلا من مرجع موثوق.
+</div>
+
+<form method="post" enctype="multipart/form-data">
+  {{ f.csrf_hidden() }}
+  <section class="card fault-section">
+    <h2>معلومات أساسية</h2>
+    <div class="grid grid-2">
+      {{ f.render_field(form.title_ar) }}
+      {{ f.render_field(form.title_en) }}
+      {{ f.render_field(form.category_id) }}
+      {{ f.render_field(form.code, help_text='إن لم يوجد رمز موثق اكتب: لا يوجد رمز موثق') }}
+      {{ f.render_field(form.severity) }}
+      {{ f.render_field(form.confidence) }}
+      {{ f.render_field(form.status) }}
+      {{ f.render_field(form.reviewed_at, help_text='بصيغة YYYY-MM-DD') }}
+    </div>
+    <h2>الموديلات المنطبقة</h2>
+    <div class="choice-grid">
+      {% for m in models %}
+        <label class="choice">
+          <input type="checkbox" name="extra_models" value="{{ m.id }}"
+                 {% if fault and m in fault.models %}checked{% endif %}>
+          <span>{{ m.name_ar }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="card fault-section">
+    <h2>الأعراض والأسباب</h2>
+    {{ f.render_field(form.symptoms_text, rows=6) }}
+    {{ f.render_field(form.causes, rows=8, help_text='سطر لكل سبب، مرتبة من الأكثر احتمالاً') }}
+    <div class="grid grid-3">
+      {{ f.render_field(form.suspect_part) }}
+      {{ f.render_field(form.part_number) }}
+      {{ f.render_field(form.part_number_confidence) }}
+    </div>
+  </section>
+
+  <section class="card fault-section">
+    <h2>الفحص والإصلاح</h2>
+    {{ f.render_field(form.tools, rows=4) }}
+    {{ f.render_field(form.initial_checks, rows=6) }}
+    {{ f.render_field(form.diagnosis_tree, rows=8) }}
+    {{ f.render_field(form.repair_steps, rows=8) }}
+    {{ f.render_field(form.verification, rows=4) }}
+    {{ f.render_field(form.final_test, rows=4) }}
+    {{ f.render_field(form.common_mistakes, rows=5) }}
+    {{ f.render_field(form.stop_when, rows=4) }}
+    {{ f.render_field(form.safety_note, rows=4) }}
+  </section>
+
+  <section class="card fault-section">
+    <h2>التوثيق</h2>
+    <div class="grid grid-2">
+      {{ f.render_field(form.source_name) }}
+      {{ f.render_field(form.source_url, rows=2, help_text='يجب أن يبدأ بـ http:// أو https://') }}
+    </div>
+    {{ f.render_field(form.source_needed, rows=3) }}
+  </section>
+
+  {{ f.submit('حفظ العطل', url_for('admin.faults')) }}
+</form>
+{% endblock %}

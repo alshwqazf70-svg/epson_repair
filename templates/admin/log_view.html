@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ entry.title }} — سجل صيانة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span>
+    <a href="{{ url_for('admin.logs') }}">سجل الصيانة</a><span>/</span> {{ entry.title }}</nav>
+{% endblock %}
+{% block content %}
+<article class="card fault-section">
+  <h1 class="section-title">{{ entry.title }}</h1>
+  <div class="kv">
+    <div><span>الموديل</span><strong>{{ entry.model.name_ar if entry.model else 'غير محدد' }}</strong></div>
+    <div><span>التاريخ</span><strong>{{ entry.log_date.strftime('%Y-%m-%d') if entry.log_date else '—' }}</strong></div>
+    <div><span>النتيجة</span><strong>{{ entry.result_label }}</strong></div>
+    <div><span>العطل المرجعي</span>
+      <strong>{% if entry.fault %}<a href="{{ url_for('public.fault_detail', slug=entry.fault.slug) }}">{{ entry.fault.title_ar }}</a>{% else %}—{% endif %}</strong></div>
+  </div>
+</article>
+
+<section class="card fault-section"><h2>الأعراض</h2><div class="prose">{{ entry.symptoms or '—' }}</div></section>
+<section class="card fault-section"><h2>التشخيص الأولي</h2><div class="prose">{{ entry.initial_diagnosis or '—' }}</div></section>
+<section class="card fault-section"><h2>الاختبارات التي أُجريت</h2><div class="prose">{{ entry.tests_done or '—' }}</div></section>
+<section class="card fault-section"><h2>القطع التي تم تنظيفها</h2><div class="prose">{{ entry.parts_cleaned or '—' }}</div></section>
+<section class="card fault-section"><h2>القطع التي تم تغييرها</h2><div class="prose">{{ entry.parts_replaced or '—' }}</div></section>
+<section class="card fault-section"><h2>الإصلاح الذي تم</h2><div class="prose">{{ entry.repair_done or '—' }}</div></section>
+<section class="card fault-section"><h2>ملاحظات</h2><div class="prose">{{ entry.notes or '—' }}</div></section>
+
+{% if entry.attachments.count() %}
+  <section class="section">
+    <h2 class="section-title">الصور المرفقة</h2>
+    <div class="gallery">
+      {% for att in entry.attachments %}
+        <figure>
+          <img src="{{ url_for('media.private_media', rel_path=att.filename) }}" alt="{{ att.caption or 'مرفق' }}"
+               data-lightbox="{{ url_for('media.private_media', rel_path=att.filename) }}"
+               data-title="{{ att.caption or 'مرفق' }}" loading="lazy">
+          <figcaption>{{ att.caption or 'مرفق' }} — {{ 'قبل' if att.kind == 'before' else 'بعد' }} الإصلاح</figcaption>
+        </figure>
+      {% endfor %}
+    </div>
+  </section>
+{% else %}
+  <div class="empty">لا توجد صور مرفقة لهذه العملية.</div>
+{% endif %}
+
+<div class="btn-row">
+  <a class="btn btn-sm" href="{{ url_for('admin.log_edit', log_id=entry.id) }}">تعديل</a>
+  <a class="btn btn-sm" href="{{ url_for('admin.log_print', log_id=entry.id) }}" target="_blank">طباعة / PDF</a>
+  <a class="btn btn-sm" href="{{ url_for('admin.logs') }}">رجوع للسجل</a>
+</div>
+{% endblock %}

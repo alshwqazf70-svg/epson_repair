@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}المراجع — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span> المراجع</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">المراجع الفنية</h1>
+
+<div class="notice info">
+  المراجع هي مصدر كل معلومة موثقة. لا تُدخل رابطاً لم تزُره أو لم تتحقق منه،
+  ولا تخترع أرقام صفحات أو إجراءات معايرة.
+</div>
+
+<div class="btn-row">
+  <a class="btn btn-primary btn-sm" href="{{ url_for('admin.reference_new') }}">إضافة مرجع</a>
+  <a class="btn btn-sm" href="{{ url_for('public.references') }}">صفحة المراجع العامة</a>
+</div>
+
+{% if refs %}
+  <table class="data">
+    <thead>
+      <tr>
+        <th>العنوان</th>
+        <th>النوع</th>
+        <th>الناشر</th>
+        <th>الموديل</th>
+        <th>الحالة</th>
+        <th>إجراءات</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ref in refs %}
+        <tr>
+          <td>
+            <strong>{{ ref.title }}</strong>
+            {% if ref.url %}<br><a href="{{ ref.url }}" target="_blank" rel="noopener noreferrer">{{ ref.url }}</a>{% endif %}
+            {% if ref.notes %}<br><span class="meta">{{ ref.notes }}</span>{% endif %}
+          </td>
+          <td>{{ {'user_guide':'دليل المستخدم','service_manual':'دليل الخدمة','spec_sheet':'ورقة مواصفات','article':'مقال/مرجع ثانوي','internal':'ملاحظة داخلية'}.get(ref.ref_type, ref.ref_type) }}</td>
+          <td>{{ ref.publisher or '—' }}</td>
+          <td>{{ ref.model.name_ar if ref.model else '— عام —' }}</td>
+          <td>{% if ref.verified %}<span class="badge ok">تم التحقق</span>{% else %}<span class="badge warn">لم يتحقق</span>{% endif %}</td>
+          <td>
+            <a class="btn btn-sm" href="{{ url_for('admin.reference_edit', ref_id=ref.id) }}">تعديل</a>
+            <form method="post" action="{{ url_for('admin.reference_delete', ref_id=ref.id) }}" class="inline-form" data-confirm="حذف المرجع؟">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-danger" type="submit">حذف</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="empty">لا توجد مراجع مسجلة.</div>
+{% endif %}
+{% endblock %}

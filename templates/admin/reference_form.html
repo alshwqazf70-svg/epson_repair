@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% import "partials/forms.html" as f %}
+{% block title %}{% if ref %}تعديل مرجع{% else %}إضافة مرجع{% endif %} — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span>
+    <a href="{{ url_for('admin.references') }}">المراجع</a><span>/</span>
+    {% if ref %}تعديل{% else %}إضافة{% endif %}</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">{% if ref %}تعديل المرجع{% else %}إضافة مرجع جديد{% endif %}</h1>
+
+<form method="post">
+  {{ f.csrf_hidden() }}
+  <div class="card fault-section">
+    <div class="grid grid-2">
+      {{ f.render_field(form.title) }}
+      {{ f.render_field(form.ref_type) }}
+      {{ f.render_field(form.publisher) }}
+      {{ f.render_field(form.model_id) }}
+    </div>
+    {{ f.render_field(form.url, rows=2, help_text='يجب أن يبدأ بـ http:// أو https://') }}
+    {{ f.render_field(form.notes, rows=3) }}
+    <div class="field">
+      <label for="{{ form.verified.id }}">{{ form.verified.label.text }}</label>
+      {{ form.verified(id=form.verified.id) }}
+    </div>
+  </div>
+  {{ f.submit('حفظ المرجع', url_for('admin.references')) }}
+</form>
+{% endblock %}

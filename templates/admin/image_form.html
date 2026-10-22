@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% import "partials/forms.html" as f %}
+{% block title %}رفع صورة — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span>
+    <a href="{{ url_for('admin.images') }}">الصور</a><span>/</span> رفع</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">رفع صورة أو مخطط</h1>
+
+<div class="notice warn">
+  الأنواع المسموحة: PNG، JPG، JPEG، GIF، WEBP، BMP — وبحد أقصى 5 ميغابايت.
+  يتم التحقق من نوع الملف فعلياً على الخادم (وليس بالاعتماد على الامتداد فقط)،
+  ولا يُسمح برفع أي ملف تنفيذي. احترم حقوق النشر: ارفع صورك الخاصة فقط.
+</div>
+
+<form method="post" enctype="multipart/form-data">
+  {{ f.csrf_hidden() }}
+  <div class="card fault-section">
+    <h2>بيانات الصورة</h2>
+    <div class="grid grid-2">
+      {{ f.render_field(form.title) }}
+      {{ f.render_field(form.image_type) }}
+      {{ f.render_field(form.model_id) }}
+      {{ f.render_field(form.fault_id) }}
+      {{ f.render_field(form.step_hint) }}
+      {{ f.render_field(form.source, help_text='مثال: تصويري الخاص، أو رابط المرجع') }}
+    </div>
+    {{ f.render_field(form.description, rows=3) }}
+    <div class="field">
+      <label for="{{ form.is_original.id }}">{{ form.is_original.label.text }}</label>
+      {{ form.is_original(id=form.is_original.id) }}
+    </div>
+    {{ f.render_field(form.license_note) }}
+    {{ f.render_field(form.file) }}
+  </div>
+  {{ f.submit('رفع الصورة', url_for('admin.images')) }}
+</form>
+{% endblock %}

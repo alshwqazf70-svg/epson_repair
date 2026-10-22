@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}إدارة الأعطال — لوحة الإدارة{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a><span>/</span> الأعطال</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">إدارة الأعطال</h1>
+
+<form class="card no-print" method="get" action="{{ url_for('admin.faults') }}" style="margin-bottom:14px">
+  <div class="grid grid-3">
+    <div><label for="q">بحث</label><input type="search" id="q" name="q" value="{{ q }}"></div>
+    <div>
+      <label for="status">الحالة</label>
+      <select name="status" id="status">
+        <option value="">الكل</option>
+        <option value="published" {% if status=='published' %}selected{% endif %}>مكتمل</option>
+        <option value="review" {% if status=='review' %}selected{% endif %}>قيد المراجعة</option>
+        <option value="draft" {% if status=='draft' %}selected{% endif %}>مسودة</option>
+      </select>
+    </div>
+    <div style="align-self:end"><button class="btn btn-primary btn-sm" type="submit">تصفية</button></div>
+  </div>
+</form>
+
+<div class="btn-row no-print">
+  <a class="btn btn-primary btn-sm" href="{{ url_for('admin.fault_new') }}">إضافة عطل جديد</a>
+</div>
+
+{% if pagination.items %}
+  <table class="data">
+    <thead>
+      <tr><th>العنوان</th><th>التصنيف</th><th>الموديلات</th><th>الحالة</th><th>الثقة</th><th>إجراءات</th></tr>
+    </thead>
+    <tbody>
+      {% for fault in pagination.items %}
+        <tr>
+          <td><a href="{{ url_for('public.fault_detail', slug=fault.slug) }}">{{ fault.title_ar }}</a></td>
+          <td>{{ fault.category.name_ar }}</td>
+          <td>{{ fault.model_names() }}</td>
+          <td><span class="badge {% if fault.status=='published' %}ok{% elif fault.status=='review' %}warn{% endif %}">{{ fault.status_label }}</span></td>
+          <td><span class="badge {% if fault.confidence=='unverified' %}warn{% else %}info{% endif %}">{{ fault.confidence_label }}</span></td>
+          <td>
+            <a class="btn btn-sm" href="{{ url_for('admin.fault_edit', fault_id=fault.id) }}">تعديل</a>
+            <form method="post" action="{{ url_for('admin.fault_delete', fault_id=fault.id) }}" style="display:inline"
+                  data-confirm="سيتم حذف العطل نهائياً. هل أنت متأكد؟">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-danger" type="submit">حذف</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if pagination.pages > 1 %}
+    <div class="btn-row">
+      {% if pagination.has_prev %}<a class="btn btn-sm" href="{{ url_for('admin.faults', page=pagination.prev_num, q=q, status=status) }}">السابق</a>{% endif %}
+      <span class="meta">صفحة {{ pagination.page }} من {{ pagination.pages }}</span>
+      {% if pagination.has_next %}<a class="btn btn-sm" href="{{ url_for('admin.faults', page=pagination.next_num, q=q, status=status) }}">التالي</a>{% endif %}
+    </div>
+  {% endif %}
+{% else %}
+  <div class="empty">لا توجد أعطال مطابقة.</div>
+{% endif %}
+{% endblock %}
