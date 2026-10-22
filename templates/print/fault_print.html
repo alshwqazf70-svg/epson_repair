@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>نسخة طباعة — {{ fault.title_ar }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/print.css') }}">
+</head>
+<body class="print-page">
+  <header class="print-header">
+    <div>
+      <strong>{{ APP_NAME_AR }}</strong><br>
+      <small>{{ APP_NAME_EN }}</small>
+    </div>
+    <div class="print-meta">
+      تاريخ الطباعة: {{ moment }}<br>
+      الموديلات: {{ fault.model_names() }}<br>
+      مستوى الثقة: {{ fault.confidence_label }} — الحالة: {{ fault.status_label }}
+    </div>
+  </header>
+
+  <h1>{{ fault.title_ar }}</h1>
+  {% if fault.title_en %}<p class="meta">{{ fault.title_en }}</p>{% endif %}
+
+  <div class="print-warning">
+    تحذير سلامة قبل أي خطوة: {{ fault.safety_note }}
+  </div>
+  {% if fault.confidence == 'unverified' %}
+    <div class="print-warning">
+      هذه المعلومة غير مؤكدة المصدر بعد. {% if fault.source_needed %}المطلوب: {{ fault.source_needed }}{% endif %}
+      لا تتخذ قرار استبدال قطعة استناداً إلى هذه الصفحة قبل التحقق.
+    </div>
+  {% endif %}
+
+  <h2>بطاقة العطل</h2>
+  <table class="data">
+    <tbody>
+      <tr><th>رمز العطل أو المؤشر</th><td>{{ fault.code }}</td></tr>
+      <tr><th>التصنيف</th><td>{{ fault.category.name_ar if fault.category else '—' }}</td></tr>
+      <tr><th>الموديلات المنطبقة</th><td>{{ fault.model_names() }}</td></tr>
+      <tr><th>درجة الخطورة</th><td>{{ fault.severity_label }}</td></tr>
+      <tr><th>القطعة أو المنطقة المشتبهة</th><td>{{ fault.suspect_part or 'غير محدد' }}</td></tr>
+      <tr><th>رقم القطعة</th><td>{{ fault.part_number or 'لا يوجد رقم قطعة موثق' }}</td></tr>
+      <tr><th>آخر مراجعة فنية</th><td>{{ fault.reviewed_at or 'غير محدد' }}</td></tr>
+    </tbody>
+  </table>
+
+  <h2>الأعراض كما يلاحظها المستخدم</h2>
+  <div class="prose">{{ fault.symptoms_text }}</div>
+
+  <h2>الأسباب المحتملة (مرتبة حسب الاحتمال التقديري)</h2>
+  <div class="prose">{{ fault.causes }}</div>
+
+  <h2>الأدوات المطلوبة</h2>
+  <div class="prose">{{ fault.tools or 'لا أدوات خاصة للفحص الأولي.' }}</div>
+
+  <h2>فحوصات أولية بسيطة وآمنة</h2>
+  <div class="prose">{{ fault.initial_checks }}</div>
+
+  <h2>شجرة تشخيص متدرجة</h2>
+  <div class="prose">{{ fault.diagnosis_tree }}</div>
+
+  <h2>خطوات الإصلاح التفصيلية</h2>
+  <div class="prose">{{ fault.repair_steps }}</div>
+
+  <h2>التحقق من نجاح الإصلاح</h2>
+  <div class="prose">{{ fault.verification }}</div>
+
+  <h2>اختبار نهائي بعد الإصلاح</h2>
+  <div class="prose">{{ fault.final_test }}</div>
+
+  <h2>أخطاء شائعة يجب تجنبها</h2>
+  <div class="prose">{{ fault.common_mistakes }}</div>
+
+  <h2>متى تتوقف وتطلب فنياً مختصاً</h2>
+  <div class="prose">{{ fault.stop_when }}</div>
+
+  <h2>المصدر والمرجع</h2>
+  <div class="prose">
+    {{ fault.source_name or 'لا يوجد مصدر مسجل' }}
+    {% if fault.source_url %} — {{ fault.source_url }}{% endif %}
+  </div>
+
+  <h2>الصور والمخططات</h2>
+  {% if images %}
+    <ul>
+      {% for img in images %}
+        <li>{{ img.title }} — {% if img.is_original %}أصلية{% else %}توضيحية{% endif %} — المصدر: {{ img.source }}</li>
+      {% endfor %}
+    </ul>
+    <p class="meta">الصور لا تُطبع تلقائياً لتقليل الحبر؛ راجع المعرض داخل الموسوعة لعرضها.</p>
+  {% else %}
+    <p>الصورة الفنية لهذا الجزء غير متاحة بعد.</p>
+  {% endif %}
+
+  <footer class="print-footer">
+    مستند داخلي خاص — المحتوى إرشادي، وأي إجراء داخلي أو كهربائي يجب أن ينفّذه فني مؤهل.
+  </footer>
+
+  <div class="no-print" style="margin-top:16px">
+    <button class="btn btn-primary" type="button" onclick="window.print()">طباعة / حفظ PDF</button>
+    <a class="btn" href="{{ url_for('public.fault_detail', slug=fault.slug) }}">رجوع لصفحة العطل</a>
+  </div>
+</body>
+</html>
