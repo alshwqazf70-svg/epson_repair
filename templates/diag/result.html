@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}نتيجة التشخيص — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs">
+    <a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span>
+    <a href="{{ url_for('diag.start') }}">التشخيص</a><span>/</span>
+    النتيجة
+  </nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">نتيجة التشخيص التقديرية — {{ model.name_ar }}</h1>
+
+<div class="notice warn">
+  <strong>هذه النتيجة تقدير إرشادي وليست ضماناً.</strong>
+  {% if ambiguous %}
+    توجد نتائج متقاربة جداً؛ لا تستنتج سبباً مؤكداً من عرض واحد، بل نفّذ الاختبارات الآمنة
+    أدناه للتمييز بينها.
+  {% endif %}
+</div>
+
+{% if symptoms %}
+  <section class="card fault-section">
+    <h2>الأعراض المحددة</h2>
+    <ul>{% for s in symptoms %}<li>{{ s.name_ar }}</li>{% endfor %}</ul>
+  </section>
+{% endif %}
+
+{% if evidence %}
+  <section class="card fault-section">
+    <h2>الإجابات التي أثّرت في النتيجة</h2>
+    <ul>{% for e in evidence %}<li>{{ e.question }} — <strong>{{ e.answer }}</strong></li>{% endfor %}</ul>
+  </section>
+{% endif %}
+
+{% if matches %}
+  <section class="section">
+    <h2 class="section-title">الأسباب المحتملة مرتبة</h2>
+    {% for match in matches %}
+      <article class="card" style="margin-bottom:12px">
+        <h3><a href="{{ url_for('public.fault_detail', slug=match.fault.slug) }}">{{ match.fault.title_ar }}</a></h3>
+        <p class="meta">{{ match.fault.category.name_ar }} — {{ match.fault.model_names() }}</p>
+        <p>درجة الثقة التقديرية: <strong>{{ match.confidence }}%</strong>
+          <span class="help">(الحد الأعلى للتقدير {{ max_confidence }}%)</span></p>
+        <div class="confidence-bar"><span style="width: {{ match.confidence }}%"></span></div>
+        <details style="margin-top:10px">
+          <summary>الفحوصات الآمنة المناسبة لهذا الاحتمال</summary>
+          <div class="prose">{{ match.fault.initial_checks }}</div>
+        </details>
+        <details>
+          <summary>الخطوة التالية في شجرة التشخيص</summary>
+          <div class="prose">{{ match.fault.diagnosis_tree }}</div>
+        </details>
+        <div class="btn-row">
+          <a class="btn btn-sm btn-primary" href="{{ url_for('public.fault_detail', slug=match.fault.slug) }}">فتح صفحة الإصلاح</a>
+          <a class="btn btn-sm" href="{{ url_for('public.fault_print', slug=match.fault.slug) }}">نسخة طباعة</a>
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+{% else %}
+  <div class="empty">
+    لم تكتمل معلومات كافية لإنتاج نتيجة. أعد تشغيل المعالج وحدد عرضاً واحداً على الأقل،
+    أو تصفّح <a href="{{ url_for('public.faults') }}">قائمة الأعطال</a>.
+  </div>
+{% endif %}
+
+<div class="btn-row no-print">
+  <a class="btn" href="{{ url_for('diag.start') }}">تشخيص جديد</a>
+  <a class="btn btn-accent" href="{{ url_for('diag.compare') }}">مقارنة الأعراض المتشابهة</a>
+  {% if current_user %}
+    <a class="btn" href="{{ url_for('admin.log_new') }}">تسجيل هذه الحالة في سجل الصيانة</a>
+  {% endif %}
+</div>
+{% endblock %}

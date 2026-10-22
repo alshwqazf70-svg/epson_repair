@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}بحث تشخيصي سريع — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> بحث تشخيصي</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">بحث تشخيصي سريع</h1>
+<form class="card no-print" method="get" action="{{ url_for('diag.lookup') }}">
+  <label for="q">وصف العرض أو اسم القطعة أو الرمز</label>
+  <input type="search" id="q" name="q" value="{{ q }}" placeholder="مثال: انحشار، شريط الحبر، طباعة باهتة">
+  <div class="btn-row"><button class="btn btn-primary btn-sm" type="submit">بحث</button></div>
+</form>
+{% if q %}
+  {% if results %}
+    <ul>
+      {% for fault in results %}
+        <li><a href="{{ url_for('public.fault_detail', slug=fault.slug) }}">{{ fault.title_ar }}</a>
+          — <span class="meta">{{ fault.model_names() }}</span></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty">لا نتائج مطابقة. جرّب <a href="{{ url_for('diag.start') }}">معالج التشخيص</a>.</div>
+  {% endif %}
+{% endif %}
+{% endblock %}

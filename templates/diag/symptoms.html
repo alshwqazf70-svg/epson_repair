@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}تحديد الأعراض — معالج التشخيص{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs">
+    <a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span>
+    <a href="{{ url_for('diag.start') }}">التشخيص</a><span>/</span>
+    اختيار الأعراض
+  </nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">الخطوة 2: حدد الأعراض على {{ model.name_ar }}</h1>
+
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+
+<form method="post" action="{{ url_for('diag.questions') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="model_id" value="{{ model.id }}">
+
+  {% for cat_id, items in grouped.items() %}
+    <section class="card fault-section">
+      <h2>{{ categories.get(cat_id).name_ar if categories.get(cat_id) else 'عام' }}</h2>
+      <div class="choice-grid">
+        {% for symptom in items %}
+          <label class="choice">
+            <input type="checkbox" name="symptoms" value="{{ symptom.id }}"
+                   {% if symptom.id in selected %}checked{% endif %}>
+            <span>{{ symptom.name_ar }} <span class="meta">({{ symptom.name_en }})</span></span>
+          </label>
+        {% endfor %}
+      </div>
+    </section>
+  {% endfor %}
+
+  <div class="btn-row">
+    <button class="btn btn-primary" type="submit">التالي: أسئلة التشخيص</button>
+    <button class="btn btn-sm" type="button" data-select-all>تحديد الكل / إلغاء الكل</button>
+    <a class="btn btn-sm" href="{{ url_for('diag.start') }}">تغيير الموديل</a>
+  </div>
+</form>
+{% endblock %}

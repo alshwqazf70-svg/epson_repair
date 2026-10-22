@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}أداة مقارنة الأعراض — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> مقارنة الأعراض</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">أداة مقارنة الأعراض</h1>
+
+<div class="notice info">
+  تعرض هذه الأداة الأعطال التي تتشابه أعراضها، والاختبارات التي تميّز بينها، حتى لا يتم
+  استنتاج سبب واحد من عرض مشترك بين عدة أسباب.
+</div>
+
+<form class="card no-print" method="get" action="{{ url_for('diag.compare') }}">
+  <div class="grid grid-2">
+    <div>
+      <label for="symptom">اختر عرضاً</label>
+      <select name="symptom" id="symptom">
+        <option value="">— اختر —</option>
+        {% for s in symptoms %}
+          <option value="{{ s.slug }}" {% if chosen and chosen.slug == s.slug %}selected{% endif %}>{{ s.name_ar }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="model_id">الموديل (اختياري)</label>
+      <select name="model_id" id="model_id">
+        <option value="0">كل الموديلات</option>
+        {% for m in models %}
+          <option value="{{ m.id }}" {% if model_id == m.id %}selected{% endif %}>{{ m.name_ar }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="btn-row"><button class="btn btn-primary btn-sm" type="submit">عرض المقارنة</button></div>
+</form>
+
+{% if chosen %}
+  {% if rows %}
+    <table class="data">
+      <thead>
+        <tr><th>العطل</th><th>الموديلات</th><th>الاختبارات التي تميّزه</th><th>الخطورة</th></tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td><a href="{{ url_for('public.fault_detail', slug=row.fault.slug) }}">{{ row.fault.title_ar }}</a><br>
+              <span class="badge {% if row.fault.confidence=='unverified' %}warn{% else %}info{% endif %}">{{ row.fault.confidence_label }}</span>
+            </td>
+            <td>{% for m in row.models %}<span class="badge">{{ m.name_ar }}</span> {% endfor %}</td>
+            <td><div class="prose" style="font-size:0.88rem">{{ row.differentiator }}</div></td>
+            <td><span class="badge {% if row.fault.severity=='electrical' %}danger{% elif row.fault.severity=='high' %}warn{% endif %}">{{ row.fault.severity_label }}</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty">لا توجد أعطال منشورة مرتبطة بهذا العرض ضمن التحديد الحالي.</div>
+  {% endif %}
+{% else %}
+  <div class="empty">اختر عرضاً من القائمة أعلاه لعرض الأعطال المتشابهة.</div>
+{% endif %}
+{% endblock %}

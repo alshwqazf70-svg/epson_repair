@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}أسئلة التشخيص — معالج التشخيص{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs">
+    <a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span>
+    <a href="{{ url_for('diag.start') }}">التشخيص</a><span>/</span>
+    أسئلة التشخيص
+  </nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">الخطوة 3: أجب عن الأسئلة — {{ model.name_ar }}</h1>
+
+<div class="notice info">
+  أجب بما تراه فعلياً. إن لم تكن متأكداً اختر الخيار الأقرب أو «لم أتحقق بعد» إن وُجد.
+</div>
+
+<form method="post" action="{{ url_for('diag.result') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  {% for question in questions %}
+    <section class="card fault-section">
+      <h2>{{ question.text_ar }}</h2>
+      {% if question.help_ar %}<p class="help">{{ question.help_ar }}</p>{% endif %}
+      <div class="choice-grid">
+        {% for option in question.options %}
+          <label class="choice">
+            <input type="radio" name="q_{{ question.id }}" value="{{ option.id }}" required>
+            <span>{{ option.label_ar }}</span>
+          </label>
+        {% endfor %}
+      </div>
+    </section>
+  {% else %}
+    <div class="empty">لا توجد أسئلة إضافية لهذه الأعراض. اضغط التالي للحصول على النتيجة.</div>
+  {% endfor %}
+
+  <div class="btn-row">
+    <button class="btn btn-primary" type="submit">عرض النتيجة</button>
+    <a class="btn btn-sm" href="{{ url_for('diag.symptoms') }}">رجوع للأعراض</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}معالج التشخيص — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> معالج التشخيص</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">معالج التشخيص — الخطوة 1: اختر الموديل</h1>
+
+<div class="notice info">
+  يعمل المعالج محلياً داخل التطبيق بقواعد صريحة وقابلة للمراجعة، دون أي خدمة ذكاء اصطناعي
+  خارجية. النتيجة <strong>تقدير إرشادي</strong> وليست ضماناً لصحة التشخيص، ولا يستنتج سبباً
+  مؤكداً من عرض واحد إذا كانت هناك أسباب متعددة محتملة.
+</div>
+
+<div class="grid grid-2">
+  {% for model in models %}
+    <article class="card">
+      <h3>{{ model.name_ar }}</h3>
+      <p class="meta">{{ model.printer_class }}</p>
+      <div class="btn-row">
+        <form method="post" action="{{ url_for('diag.symptoms') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="model_id" value="{{ model.id }}">
+          <button class="btn btn-primary btn-sm" type="submit">ابدأ تشخيص هذا الموديل</button>
+        </form>
+      </div>
+    </article>
+  {% endfor %}
+</div>
+{% endblock %}
