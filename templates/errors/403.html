@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}403 — غير مصرح{% endblock %}
+{% block content %}
+<section class="card">
+  <h1 class="section-title">403 — الوصول غير مصرح به</h1>
+  <p>هذه الصفحة أو هذا الملف محمي على مستوى الخادم ولا يمكن الوصول إليه بدون جلسة دخول صالحة.</p>
+  <div class="btn-row">
+    <a class="btn btn-primary" href="{{ url_for('auth.login') }}">تسجيل الدخول</a>
+    <a class="btn" href="{{ url_for('public.index') }}">الرئيسية</a>
+  </div>
+</section>
+{% endblock %}

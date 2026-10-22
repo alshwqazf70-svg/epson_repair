@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}413 — الملف كبير جداً{% endblock %}
+{% block content %}
+<section class="card">
+  <h1 class="section-title">413 — حجم الملف أكبر من المسموح</h1>
+  <p>الحد الأقصى للملف المرفوع هو 5 ميغابايت. صغّر الصورة أو اضغطها ثم أعد المحاولة.</p>
+  <div class="btn-row">
+    <a class="btn btn-primary" href="{{ url_for('admin.image_new') }}">إعادة رفع صورة</a>
+    <a class="btn" href="{{ url_for('admin.dashboard') }}">لوحة الإدارة</a>
+  </div>
+</section>
+{% endblock %}
