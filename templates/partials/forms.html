@@ -1,0 +1,23 @@
+{% macro render_field(field, label=None, help_text=None, rows=None) %}
+  <div class="field">
+    <label for="{{ field.id }}">{{ label or field.label.text }}</label>
+    {% if rows and field.type == 'TextAreaField' %}
+      {{ field(rows=rows, id=field.id, class='') }}
+    {% else %}
+      {{ field(id=field.id) }}
+    {% endif %}
+    {% if help_text %}<p class="help">{{ help_text }}</p>{% endif %}
+    {% for err in field.errors %}<p class="field-errors">{{ err }}</p>{% endfor %}
+  </div>
+{% endmacro %}
+
+{% macro csrf_hidden() %}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{% endmacro %}
+
+{% macro submit(text='حفظ', cancel_url=None) %}
+  <div class="btn-row">
+    <button class="btn btn-primary" type="submit">{{ text }}</button>
+    {% if cancel_url %}<a class="btn" href="{{ cancel_url }}">إلغاء</a>{% endif %}
+  </div>
+{% endmacro %}
