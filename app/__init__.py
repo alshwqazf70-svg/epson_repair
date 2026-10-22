@@ -85,7 +85,7 @@ def create_app(config_name: str | None = None, database_uri: str | None = None) 
     def _security_headers(resp):
         resp.headers.setdefault("X-Content-Type-Options", "nosniff")
         resp.headers.setdefault("X-Frame-Options", "DENY")
-        resp.headers.setdefault("Referrer-Policy", "no-referrer")
+        resp.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
         resp.headers.setdefault("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
         resp.headers.setdefault(
             "Content-Security-Policy",
