@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}الموديلات — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> الموديلات</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">الموديلات المعتمدة</h1>
+<div class="grid grid-2">
+  {% for model in models %}
+    <article class="card">
+      <h3>{{ model.name_ar }} <small class="meta">{{ model.name_en }}</small></h3>
+      <p>{{ model.summary }}</p>
+      <dl class="kv">
+        <dt>فئة الطابعة</dt><dd>{{ model.printer_class }}</dd>
+        <dt>الإبر / الأعمدة</dt><dd>{{ model.pins }} — {{ model.columns }}</dd>
+        <dt>الواجهات</dt><dd>{{ model.interfaces }}</dd>
+        <dt>شريط الحبر</dt><dd>{{ model.ribbon_part }}</dd>
+        <dt>MTBF</dt><dd>{{ model.mtbf }}</dd>
+        <dt>عمر رأس الطباعة</dt><dd>{{ model.print_head_life }}</dd>
+        <dt>مسارات الورق</dt><dd>{{ model.paper_paths }}</dd>
+      </dl>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-sm" href="{{ url_for('public.model_detail', slug=model.slug) }}">الصفحة الفنية</a>
+        <a class="btn btn-sm" href="{{ url_for('public.faults', model=model.slug) }}">الأعطال</a>
+        <a class="btn btn-sm" href="{{ url_for('public.gallery', model=model.slug) }}">المعرض</a>
+      </div>
+    </article>
+  {% else %}
+    <div class="empty">لا توجد موديلات مفعّلة.</div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}نتائج البحث — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> البحث</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">نتائج البحث{% if q %} عن: «{{ q }}»{% endif %}</h1>
+
+<form class="card no-print" method="get" action="{{ url_for('public.search') }}" style="margin-bottom:16px">
+  <div class="grid grid-3">
+    <div>
+      <label for="q">كلمة البحث (عربية أو إنجليزية)</label>
+      <input type="search" id="q" name="q" value="{{ q }}" placeholder="مثال: طباعة باهتة، انحشار، ribbon">
+    </div>
+    <div>
+      <label for="model_id">الموديل</label>
+      <select name="model_id" id="model_id">
+        <option value="0">كل الموديلات</option>
+        {% for m in nav_models %}
+          <option value="{{ m.id }}" {% if model_id == m.id %}selected{% endif %}>{{ m.name_ar }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="category_id">التصنيف</label>
+      <select name="category_id" id="category_id">
+        <option value="0">كل التصنيفات</option>
+        {% for c in nav_categories %}
+          <option value="{{ c.id }}" {% if category_id == c.id %}selected{% endif %}>{{ c.name_ar }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="btn-row"><button class="btn btn-primary btn-sm" type="submit">بحث</button></div>
+</form>
+
+{% if q or model_id or category_id %}
+  {% if results %}
+    <p class="meta">عدد النتائج: {{ results|length }}</p>
+    <div class="grid grid-2">
+      {% for fault in results %}
+        <article class="card">
+          <h3><a href="{{ url_for('public.fault_detail', slug=fault.slug) }}">{{ highlight(fault.title_ar, q)|safe }}</a></h3>
+          <p class="meta">{{ fault.category.name_ar }} — {{ fault.model_names() }}</p>
+          <p>{{ highlight(fault.symptoms_text, q)|safe|truncate(180) }}</p>
+          <p>
+            <span class="badge">{{ fault.severity_label }}</span>
+            <span class="badge {% if fault.confidence=='unverified' %}warn{% else %}info{% endif %}">{{ fault.confidence_label }}</span>
+          </p>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty">
+      لا توجد نتائج مطابقة. جرّب كلمات أبسط، أو تصفّح
+      <a href="{{ url_for('public.faults') }}">قائمة الأعطال</a>،
+      أو استخدم <a href="{{ url_for('diag.start') }}">معالج التشخيص</a>.
+    </div>
+  {% endif %}
+{% else %}
+  <div class="empty">اكتب كلمة بحث في الحقل أعلاه للبدء.</div>
+{% endif %}
+{% endblock %}

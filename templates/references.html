@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}المراجع والمصادر — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> المراجع</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">المراجع والمصادر الفنية</h1>
+
+<div class="notice info">
+  الموسوعة تحترم حقوق النشر: لا ننسخ أدلة كاملة أو صوراً محمية. ندرج روابط إلى مصادر رسمية،
+  ونشير صراحة إلى ما لم يتحقق منه بعد.
+</div>
+
+{% if refs %}
+  <table class="data">
+    <thead>
+      <tr><th>العنوان</th><th>النوع</th><th>الناشر</th><th>الموديل</th><th>الحالة</th></tr>
+    </thead>
+    <tbody>
+      {% for ref in refs %}
+        <tr>
+          <td>
+            {% if ref.url %}<a href="{{ ref.url }}" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
+            {% else %}{{ ref.title }}{% endif %}
+            {% if ref.notes %}<br><span class="help">{{ ref.notes }}</span>{% endif %}
+          </td>
+          <td>{{ {'user_guide':'دليل المستخدم','service_manual':'دليل الخدمة','spec_sheet':'ورقة مواصفات','article':'مقال ثانوي','internal':'ملاحظة داخلية'}.get(ref.ref_type, ref.ref_type) }}</td>
+          <td>{{ ref.publisher }}</td>
+          <td>{{ ref.model_id and 'موديل محدد' or 'عام' }}</td>
+          <td><span class="badge {% if ref.verified %}ok{% else %}warn{% endif %}">{% if ref.verified %}متحقق{% else %}لم يتحقق{% endif %}</span></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="empty">لا توجد مراجع مسجلة بعد.</div>
+{% endif %}
+{% endblock %}

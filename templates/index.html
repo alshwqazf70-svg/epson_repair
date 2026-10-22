@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ APP_NAME_AR }} — الرئيسية{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="notice info">
+    <strong>موسوعة صيانة خاصة</strong> — المحتوى التشخيصي إرشادي ومبني على مصادر معلنة.
+    لا تُنفّذ أي إجراء داخلي أو كهربائي إلا من فني مؤهل، ولا يوجد في الموسوعة قيم كهربائية
+    أو أرقام قطع داخلية غير موثقة.
+  </div>
+
+  <h1 class="section-title">الموديلات المعتمدة في هذا الإصدار</h1>
+  <div class="grid grid-2">
+    {% for model in models %}
+      <article class="card">
+        <h3><a href="{{ url_for('public.model_detail', slug=model.slug) }}">{{ model.name_ar }}</a></h3>
+        <p>{{ model.summary|truncate(220) }}</p>
+        <p class="meta">
+          <span class="badge info">{{ model.printer_class }}</span>
+          <span class="badge">الواجهات: {{ model.interfaces }}</span>
+        </p>
+        <p class="meta">شريط الحبر: <strong>{{ model.ribbon_part }}</strong></p>
+        <div class="btn-row">
+          <a class="btn btn-primary btn-sm" href="{{ url_for('public.model_detail', slug=model.slug) }}">فتح صفحة الموديل</a>
+          <a class="btn btn-sm" href="{{ url_for('public.faults', model=model.slug) }}">أعطال هذا الموديل</a>
+          <a class="btn btn-sm" href="{{ url_for('diag.symptoms') }}?model_id={{ model.id }}">تشخيص هذا الموديل</a>
+        </div>
+      </article>
+    {% else %}
+      <div class="empty">لا توجد موديلات مفعّلة بعد.</div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">تصنيفات الأعطال</h2>
+  <div class="grid grid-3">
+    {% for cat in categories %}
+      <article class="card">
+        <h3><a href="{{ url_for('public.category_detail', slug=cat.slug) }}">{{ cat.name_ar }}</a></h3>
+        <p>{{ cat.description }}</p>
+        <p class="meta">{{ cat.faults.filter_by(status='published').count() }} مقالة منشورة</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="grid grid-2">
+    <article class="card">
+      <h3>مؤشر التغطية</h3>
+      <dl class="kv">
+        <dt>مقالات منشورة</dt><dd>{{ stats.published }}</dd>
+        <dt>مقالات قيد المراجعة</dt><dd>{{ stats.review }}</dd>
+        <dt>موثقة بدليل أو مصدر رسمي</dt><dd>{{ stats.verified }}</dd>
+        <dt>مراجع فنية ثانوية</dt><dd>{{ stats.secondary }}</dd>
+        <dt>تحتاج إلى تحقق</dt><dd>{{ stats.unverified }}</dd>
+        <dt>تصنيفات بلا مقالات بعد</dt><dd>{{ stats.empty_categories|length }}</dd>
+      </dl>
+      <div class="btn-row">
+        <a class="btn btn-sm" href="{{ url_for('public.coverage') }}">تفاصيل التغطية والمراجعة</a>
+      </div>
+    </article>
+    <article class="card">
+      <h3>أحدث المقالات</h3>
+      <ul>
+        {% for fault in recent %}
+          <li><a href="{{ url_for('public.fault_detail', slug=fault.slug) }}">{{ fault.title_ar }}</a>
+            <span class="badge">{{ fault.category.name_ar }}</span></li>
+        {% else %}
+          <li class="meta">لا توجد مقالات بعد.</li>
+        {% endfor %}
+      </ul>
+      <div class="btn-row">
+        <a class="btn btn-accent btn-sm" href="{{ url_for('diag.start') }}">ابدأ معالج التشخيص</a>
+        <a class="btn btn-sm" href="{{ url_for('public.faults') }}">كل الأعطال</a>
+      </div>
+    </article>
+  </div>
+</section>
+{% endblock %}

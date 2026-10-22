@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}التصنيفات — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> التصنيفات</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">تصنيفات الأعطال</h1>
+<div class="grid grid-3">
+  {% for cat in categories %}
+    <article class="card">
+      <h3><a href="{{ url_for('public.category_detail', slug=cat.slug) }}">{{ cat.name_ar }}</a></h3>
+      <p>{{ cat.description }}</p>
+      <p class="meta">{{ cat.faults.filter_by(status='published').count() }} مقالة منشورة</p>
+    </article>
+  {% else %}
+    <div class="empty">لا توجد تصنيفات بعد.</div>
+  {% endfor %}
+</div>
+{% endblock %}

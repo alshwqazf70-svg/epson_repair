@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}قائمة الأعطال — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> الأعطال</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">
+  قائمة الأعطال
+  {% if model %}<small class="meta">— {{ model.name_ar }}</small>{% endif %}
+  {% if category %}<small class="meta">— {{ category.name_ar }}</small>{% endif %}
+</h1>
+
+<form class="card no-print" method="get" action="{{ url_for('public.faults') }}" style="margin-bottom:16px">
+  <div class="grid grid-3">
+    <div>
+      <label for="model">الموديل</label>
+      <select name="model" id="model">
+        <option value="">كل الموديلات</option>
+        {% for m in nav_models %}
+          <option value="{{ m.slug }}" {% if model and model.slug == m.slug %}selected{% endif %}>{{ m.name_ar }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="category">التصنيف</label>
+      <select name="category" id="category">
+        <option value="">كل التصنيفات</option>
+        {% for c in nav_categories %}
+          <option value="{{ c.slug }}" {% if category and category.slug == c.slug %}selected{% endif %}>{{ c.name_ar }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="severity">درجة الخطورة</label>
+      <select name="severity" id="severity">
+        <option value="">الكل</option>
+        {% for key, label in severity_labels.items() %}
+          <option value="{{ key }}" {% if severity == key %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary btn-sm" type="submit">تصفية</button>
+    <a class="btn btn-sm" href="{{ url_for('public.faults') }}">إزالة التصفية</a>
+  </div>
+</form>
+
+{% if faults %}
+  <div class="grid grid-2">
+    {% for fault in faults %}
+      <article class="card">
+        <h3><a href="{{ url_for('public.fault_detail', slug=fault.slug) }}">{{ fault.title_ar }}</a></h3>
+        <p class="meta">{{ fault.category.name_ar }} — {{ fault.model_names() }}</p>
+        <p>{{ fault.symptoms_text|truncate(160) }}</p>
+        <p>
+          <span class="badge {% if fault.severity=='electrical' %}danger{% elif fault.severity=='high' %}warn{% elif fault.severity=='low' %}ok{% endif %}">{{ fault.severity_label }}</span>
+          <span class="badge {% if fault.confidence=='unverified' %}warn{% else %}info{% endif %}">{{ fault.confidence_label }}</span>
+          <span class="badge">{{ fault.code }}</span>
+        </p>
+      </article>
+    {% endfor %}
+  </div>
+  {% if pagination and pagination.pages > 1 %}
+    <div class="btn-row no-print">
+      {% if pagination.has_prev %}<a class="btn btn-sm" href="{{ url_for('public.faults', page=pagination.prev_num, model=model.slug if model else '', category=category.slug if category else '', severity=severity) }}">السابق</a>{% endif %}
+      <span class="meta">صفحة {{ pagination.page }} من {{ pagination.pages }}</span>
+      {% if pagination.has_next %}<a class="btn btn-sm" href="{{ url_for('public.faults', page=pagination.next_num, model=model.slug if model else '', category=category.slug if category else '', severity=severity) }}">التالي</a>{% endif %}
+    </div>
+  {% endif %}
+{% else %}
+  <div class="empty">لا توجد أعطال مطابقة. جرّب تعديل التصفية أو استخدام البحث.</div>
+{% endif %}
+{% endblock %}

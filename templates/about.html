@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}عن الموسوعة — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> عن الموسوعة</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">عن هذه الموسوعة</h1>
+
+<section class="card fault-section">
+  <h2>ما هي؟</h2>
+  <p>
+    موسوعة صيانة رقمية خاصة بمالك المشروع، مبنية بتطبيق Flask + SQLite، تعمل محلياً بالكامل
+    دون إرسال أي بيانات أو صور إلى خدمة خارجية، ودون الحاجة إلى أي واجهة ذكاء اصطناعي مدفوعة.
+  </p>
+</section>
+
+<section class="card fault-section">
+  <h2>الموديلات</h2>
+  <p>الإصدار الأول يغطي موديلين فقط: Epson LX-350 و Epson FX-890، مع بنية قاعدة بيانات تسمح
+  بإضافة موديلات أخرى لاحقاً دون إعادة بناء النظام.</p>
+</section>
+
+<section class="card fault-section">
+  <h2>منهجية التوثيق</h2>
+  <ul>
+    <li>كل مقالة تحمل مستوى ثقة: موثق بدليل الخدمة، موثق بدليل المستخدم، مرجع فني ثانوي، أو يحتاج إلى تحقق.</li>
+    <li>يُفصل دائماً بين التشخيص المؤكد والاحتمال.</li>
+    <li>لا تُعرض أرقام قطع أو قيم كهربائية أو إجراءات معايرة مختلقة.</li>
+    <li>الصور إما أصلية من مصدر مسموح أو رسوم توضيحية موسومة بأنها غير مطابقة بالضرورة للبنية الدقيقة.</li>
+  </ul>
+</section>
+
+<section class="card fault-section">
+  <h2>حدود معروفة</h2>
+  <ul>
+    <li>لا يتوفر دليل خدمة رسمي داخل المشروع؛ إجراءات الفحص الداخلي موسومة بأنها تحتاج فنياً.</li>
+    <li>أنماط وميض المؤشرات ومجموعات أزرار الاختبار الذاتي غير موثقة للطرازين وتحتاج إلى دليل المستخدم.</li>
+    <li>بعض مواصفات FX-890 مأخوذة من صفحة FX-890II(N) الرسمية وقد تختلف عن الجيل الأول.</li>
+  </ul>
+</section>
+
+<div class="btn-row">
+  <a class="btn btn-primary" href="{{ url_for('public.coverage') }}">مؤشر التغطية</a>
+  <a class="btn" href="{{ url_for('public.references') }}">المراجع</a>
+  <a class="btn" href="{{ url_for('public.safety') }}">السلامة</a>
+</div>
+{% endblock %}

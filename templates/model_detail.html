@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}{{ model.name_ar }} — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs">
+    <a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span>
+    <a href="{{ url_for('public.models') }}">الموديلات</a><span>/</span>
+    {{ model.name_ar }}
+  </nav>
+{% endblock %}
+{% block content %}
+<section class="section">
+  <h1 class="section-title">{{ model.name_ar }}</h1>
+  <div class="grid grid-2">
+    <article class="card">
+      <h3>المواصفات المعتمدة</h3>
+      <dl class="kv">
+        <dt>الفئة</dt><dd>{{ model.printer_class }}</dd>
+        <dt>الإبر</dt><dd>{{ model.pins }}</dd>
+        <dt>الأعمدة</dt><dd>{{ model.columns }}</dd>
+        <dt>الواجهات</dt><dd>{{ model.interfaces }}</dd>
+        <dt>شريط الحبر</dt><dd>{{ model.ribbon_part }}</dd>
+        <dt>MTBF</dt><dd>{{ model.mtbf }}</dd>
+        <dt>عمر رأس الطباعة</dt><dd>{{ model.print_head_life }}</dd>
+        <dt>الذاكرة</dt><dd>{{ model.memory }}</dd>
+        <dt>مسارات الورق</dt><dd>{{ model.paper_paths }}</dd>
+      </dl>
+    </article>
+    <article class="card">
+      <h3>نبذة وملاحظات التحقق</h3>
+      <p>{{ model.summary }}</p>
+      {% if model.specs_note %}
+        <div class="notice warn">{{ model.specs_note }}</div>
+      {% endif %}
+      <div class="btn-row">
+        <a class="btn btn-accent btn-sm" href="{{ url_for('diag.symptoms') }}?model_id={{ model.id }}">تشخيص هذا الموديل</a>
+        <a class="btn btn-sm" href="{{ url_for('public.gallery', model=model.slug) }}">معرض الصور</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">الأعطال حسب التصنيف</h2>
+  {% for cat in categories %}
+    {% if counts.get(cat.id) %}
+      <div class="card" style="margin-bottom:12px">
+        <h3>{{ cat.name_ar }} <span class="badge">{{ counts.get(cat.id) }}</span></h3>
+        <ul>
+          {% for fault in by_category.get(cat.id, []) %}
+            <li><a href="{{ url_for('public.fault_detail', slug=fault.slug) }}">{{ fault.title_ar }}</a>
+              <span class="badge {% if fault.severity=='electrical' %}danger{% elif fault.severity=='high' %}warn{% endif %}">{{ fault.severity_label }}</span>
+              <span class="badge {% if fault.confidence=='unverified' %}warn{% else %}info{% endif %}">{{ fault.confidence_label }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endfor %}
+</section>
+
+<section class="section">
+  <h2 class="section-title">الصور والمخططات الخاصة بهذا الموديل</h2>
+  {% if images %}
+    <div class="gallery">
+      {% for img in images %}
+        <figure>
+          {% if img.storage == 'bundled' %}
+            <img src="{{ url_for('static', filename='images/' + img.filename) }}"
+                 alt="{{ img.title }}" data-lightbox="{{ url_for('static', filename='images/' + img.filename) }}"
+                 data-title="{{ img.title }}" loading="lazy">
+          {% else %}
+            <img src="{{ url_for('media.private_media', rel_path=img.filename) }}"
+                 alt="{{ img.title }}" data-lightbox="{{ url_for('media.private_media', rel_path=img.filename) }}"
+                 data-title="{{ img.title }}" loading="lazy">
+          {% endif %}
+          <figcaption>
+            <strong>{{ img.title }}</strong><br>
+            <span class="meta">{{ img.description }}</span><br>
+            <span class="badge {% if img.is_original %}ok{% else %}warn{% endif %}">
+              {% if img.is_original %}أصلية{% else %}توضيحية{% endif %}</span>
+            <span class="badge">المصدر: {{ img.source }}</span>
+          </figcaption>
+        </figure>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty">لا توجد صور مرتبطة بهذا الموديل بعد.</div>
+  {% endif %}
+</section>
+
+<section class="section">
+  <h2 class="section-title">المراجع الخاصة بهذا الموديل</h2>
+  {% if refs %}
+    <ul>
+      {% for ref in refs %}
+        <li>
+          {% if ref.url %}<a href="{{ ref.url }}" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
+          {% else %}{{ ref.title }}{% endif %}
+          — <span class="meta">{{ ref.publisher }}</span>
+          <span class="badge {% if ref.verified %}ok{% else %}warn{% endif %}">{% if ref.verified %}متحقق{% else %}لم يتحقق{% endif %}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty">لا توجد مراجع مسجلة لهذا الموديل بعد.</div>
+  {% endif %}
+</section>
+{% endblock %}

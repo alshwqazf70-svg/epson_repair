@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}{{ fault.title_ar }} — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs">
+    <a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span>
+    <a href="{{ url_for('public.models') }}">الموديلات</a><span>/</span>
+    {% for m in fault.models %}
+      <a href="{{ url_for('public.model_detail', slug=m.slug) }}">{{ m.name_ar }}</a>{% if not loop.last %}， {% endif %}
+    {% endfor %}<span>/</span>
+    <a href="{{ url_for('public.category_detail', slug=fault.category.slug) }}">{{ fault.category.name_ar }}</a><span>/</span>
+    {{ fault.title_ar }}
+  </nav>
+{% endblock %}
+
+{% block content %}
+<article>
+  <header class="fault-header" style="margin-bottom:14px">
+    <h1>{{ fault.title_ar }}</h1>
+    {% if fault.title_en %}<p class="meta">{{ fault.title_en }}</p>{% endif %}
+    <p>
+      <span class="badge info">{{ fault.category.name_ar }}</span>
+      {% for m in fault.models %}<a class="badge" href="{{ url_for('public.model_detail', slug=m.slug) }}">{{ m.name_ar }}</a>{% endfor %}
+      <span class="badge {% if fault.severity=='electrical' %}danger{% elif fault.severity=='high' %}warn{% elif fault.severity=='low' %}ok{% endif %}">الخطورة: {{ fault.severity_label }}</span>
+      <span class="badge {% if fault.confidence=='unverified' %}warn{% elif fault.confidence=='secondary' %}{% else %}ok{% endif %}">{{ fault.confidence_label }}</span>
+      <span class="badge">{{ fault.status_label }}</span>
+    </p>
+  </header>
+
+  <div class="notice warn">
+    <strong>تحذير سلامة قبل أي خطوة:</strong> {{ fault.safety_note }}
+  </div>
+
+  {% if fault.severity == 'electrical' or fault.severity == 'high' %}
+    <div class="notice">
+      <strong>أوقف التشغيل وراجع فنياً مؤهلاً</strong> إذا ظهرت رائحة احتراق أو دخان أو شرر
+      أو سخونة غير معتادة، أو إذا استمر العطل بعد الفحوصات الأولية الآمنة.
+    </div>
+  {% endif %}
+
+  {% if fault.confidence == 'unverified' %}
+    <div class="notice warn">
+      <strong>هذه المعلومة غير مؤكدة المصدر بعد.</strong>
+      {% if fault.source_needed %}المطلوب: {{ fault.source_needed }}{% endif %}
+      لا تتخذ قراراً باستبدال قطعة استناداً إلى هذه الصفحة قبل التحقق.
+    </div>
+  {% endif %}
+
+  <section class="card fault-section">
+    <h2>بطاقة العطل</h2>
+    <dl class="kv">
+      <dt>رمز العطل أو المؤشر</dt><dd>{{ fault.code }}</dd>
+      <dt>الموديلات المنطبقة</dt><dd>{{ fault.model_names() }}</dd>
+      <dt>القطعة أو المنطقة المشتبهة</dt><dd>{{ fault.suspect_part or 'غير محدد' }}</dd>
+      <dt>رقم القطعة</dt>
+      <dd>
+        {% if fault.part_number %}{{ fault.part_number }}
+          <span class="badge {% if fault.part_number_confidence=='unverified' %}warn{% else %}ok{% endif %}">
+            {{ {'service_manual':'موثق بدليل الخدمة','user_manual':'موثق بدليل المستخدم','secondary':'مرجع ثانوي','unverified':'يحتاج تحققاً'}.get(fault.part_number_confidence) }}</span>
+        {% else %}لا يوجد رقم قطعة موثق{% endif %}
+      </dd>
+      <dt>مستوى الثقة</dt><dd>{{ fault.confidence_label }}</dd>
+      <dt>آخر مراجعة فنية</dt><dd>{{ fault.reviewed_at or 'غير محدد' }}</dd>
+    </dl>
+  </section>
+
+  <section class="card fault-section">
+    <h2>الأعراض كما يلاحظها المستخدم</h2>
+    <div class="prose">{{ fault.symptoms_text }}</div>
+  </section>
+
+  <section class="card fault-section">
+    <h2>الأسباب المحتملة (مرتبة حسب الاحتمال التقديري)</h2>
+    <div class="prose">{{ fault.causes }}</div>
+    <p class="help">الاحتمالات ليست حقائق مؤكدة؛ الترتيب تقديري مبني على شيوع السبب.</p>
+  </section>
+
+  <section class="card fault-section">
+    <h2>الأدوات المطلوبة</h2>
+    <div class="prose">{{ fault.tools or 'لا أدوات خاصة للفحص الأولي.' }}</div>
+  </section>
+
+  <section class="card fault-section">
+    <h2>فحوصات أولية بسيطة وآمنة</h2>
+    <div class="prose">{{ fault.initial_checks }}</div>
+  </section>
+
+  <section class="card fault-section">
+    <h2>شجرة تشخيص متدرجة</h2>
+    <div class="prose">{{ fault.diagnosis_tree }}</div>
+  </section>
+
+  <section class="card fault-section">
+    <h2>خطوات الإصلاح التفصيلية</h2>
+    <div class="prose">{{ fault.repair_steps }}</div>
+  </section>
+
+  <section class="card fault-section">
+    <h2>التحقق من نجاح الإصلاح</h2>
+    <div class="prose">{{ fault.verification }}</div>
+  </section>
+
+  <section class="card fault-section">
+    <h2>اختبار نهائي بعد الإصلاح</h2>
+    <div class="prose">{{ fault.final_test }}</div>
+  </section>
+
+  <section class="card fault-section">
+    <h2>أخطاء شائعة يجب تجنبها</h2>
+    <div class="prose">{{ fault.common_mistakes }}</div>
+  </section>
+
+  <section class="card fault-section">
+    <h2>متى تتوقف وتطلب فنياً مختصاً</h2>
+    <div class="prose">{{ fault.stop_when }}</div>
+  </section>
+
+  <section class="card fault-section">
+    <h2>الصور والمخططات المرتبطة</h2>
+    {% if images %}
+      <div class="gallery">
+        {% for img in images %}
+          <figure>
+            {% if img.storage == 'bundled' %}
+              <img src="{{ url_for('static', filename='images/' + img.filename) }}" alt="{{ img.title }}"
+                   data-lightbox="{{ url_for('static', filename='images/' + img.filename) }}" data-title="{{ img.title }}" loading="lazy">
+            {% else %}
+              {% if current_user %}
+                <img src="{{ url_for('media.private_media', rel_path=img.filename) }}" alt="{{ img.title }}"
+                     data-lightbox="{{ url_for('media.private_media', rel_path=img.filename) }}" data-title="{{ img.title }}" loading="lazy">
+              {% else %}
+                <img src="{{ url_for('static', filename='images/diagrams/unavailable.svg') }}" alt="الصورة خاصة">
+              {% endif %}
+            {% endif %}
+            <figcaption><strong>{{ img.title }}</strong><br><span class="meta">{{ img.description }}</span><br>
+              <span class="badge {% if img.is_original %}ok{% else %}warn{% endif %}">{% if img.is_original %}أصلية{% else %}توضيحية{% endif %}</span>
+              <span class="meta">{{ img.source }}</span>
+            </figcaption>
+          </figure>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty">
+        <img src="{{ url_for('static', filename='images/diagrams/unavailable.svg') }}" alt="" style="max-width:240px">
+        <p>الصورة الفنية لهذا الجزء غير متاحة بعد.</p>
+        {% if current_user %}
+          <a class="btn btn-sm" href="{{ url_for('admin.image_new') }}">رفع صورة خاصة بك</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="card fault-section">
+    <h2>المصدر والمرجع</h2>
+    <p>
+      {% if fault.source_url %}
+        <a href="{{ fault.source_url }}" target="_blank" rel="noopener noreferrer">{{ fault.source_name }}</a>
+      {% else %}
+        {{ fault.source_name or 'لا يوجد مصدر مسجل' }}
+      {% endif %}
+    </p>
+    {% if fault.source_needed %}<div class="notice warn">مصدر فني مطلوب: {{ fault.source_needed }}</div>{% endif %}
+  </section>
+
+  <section class="fault-section no-print">
+    <div class="btn-row">
+      <button class="btn btn-primary" type="button" data-print>طباعة هذه الصفحة</button>
+      <a class="btn" href="{{ url_for('public.fault_print', slug=fault.slug) }}">نسخة طباعة مخصصة</a>
+      {% if current_user %}
+        <a class="btn" href="{{ url_for('admin.fault_edit', fault_id=fault.id) }}">تعديل المقالة</a>
+        <a class="btn btn-accent" href="{{ url_for('admin.log_new') }}?fault_id={{ fault.id }}">تسجيل صيانة لهذا العطل</a>
+      {% endif %}
+      <a class="btn" href="{{ url_for('diag.compare', symptom=(fault.symptom_links[0].slug if fault.symptom_links else '')) }}">مقارنة أعراض مشابهة</a>
+    </div>
+  </section>
+
+  {% if related %}
+    <section class="section">
+      <h2 class="section-title">مقالات ذات صلة</h2>
+      <ul>
+        {% for f in related %}
+          <li><a href="{{ url_for('public.fault_detail', slug=f.slug) }}">{{ f.title_ar }}</a></li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+</article>
+{% endblock %}

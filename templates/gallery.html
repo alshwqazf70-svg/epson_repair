@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}المعرض الفني — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> المعرض الفني</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">المعرض الفني{% if model %} — {{ model.name_ar }}{% endif %}</h1>
+
+<div class="notice info">
+  كل صورة معروضة موثقة بالعنوان والوصف والموديل والمصدر ونوعها (أصلية أم توضيحية).
+  الرسوم التوضيحية في هذا المشروع مرسومة داخلياً وموسومة بعبارة
+  «رسم توضيحي غير مطابق بالضرورة للبنية الداخلية الدقيقة».
+  لا نعرض صورة طراز آخر على أنها الطراز المطلوب.
+</div>
+
+<form class="card no-print" method="get" action="{{ url_for('public.gallery') }}" style="margin-bottom:16px">
+  <label for="model">تصفية حسب الموديل</label>
+  <select name="model" id="model" onchange="this.form.submit()">
+    <option value="">كل الموديلات</option>
+    {% for m in models %}
+      <option value="{{ m.slug }}" {% if model and model.slug == m.slug %}selected{% endif %}>{{ m.name_ar }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+{% if images %}
+  <div class="gallery">
+    {% for img in images %}
+      <figure>
+        {% if img.storage == 'bundled' %}
+          <img src="{{ url_for('static', filename='images/' + img.filename) }}" alt="{{ img.title }}"
+               data-lightbox="{{ url_for('static', filename='images/' + img.filename) }}" data-title="{{ img.title }}" loading="lazy">
+        {% elif current_user %}
+          <img src="{{ url_for('media.private_media', rel_path=img.filename) }}" alt="{{ img.title }}"
+               data-lightbox="{{ url_for('media.private_media', rel_path=img.filename) }}" data-title="{{ img.title }}" loading="lazy">
+        {% else %}
+          <img src="{{ url_for('static', filename='images/diagrams/unavailable.svg') }}" alt="صورة خاصة — تتطلب دخول المالك">
+        {% endif %}
+        <figcaption>
+          <strong>{{ img.title }}</strong><br>
+          <span class="meta">{{ img.description }}</span><br>
+          <span class="badge {% if img.is_original %}ok{% else %}warn{% endif %}">{% if img.is_original %}أصلية{% else %}توضيحية{% endif %}</span>
+          <span class="badge">{{ {'photo':'صورة','diagram':'مخطط','panel':'لوحة تحكم'}.get(img.image_type, img.image_type) }}</span><br>
+          <span class="meta">المصدر: {{ img.source }}</span>
+          {% if img.step_hint %}<br><span class="meta">الخطوة/القطعة: {{ img.step_hint }}</span>{% endif %}
+        </figcaption>
+      </figure>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty">لا توجد صور أو مخططات متاحة بعد لهذا التحديد.</div>
+{% endif %}
+
+{% if current_user %}
+  <div class="btn-row no-print">
+    <a class="btn btn-primary btn-sm" href="{{ url_for('admin.image_new') }}">رفع صورة جديدة</a>
+  </div>
+{% endif %}
+{% endblock %}

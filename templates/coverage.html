@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}مؤشر التغطية — {{ APP_NAME_AR }}{% endblock %}
+{% block breadcrumbs %}
+  <nav class="breadcrumbs"><a href="{{ url_for('public.index') }}">الرئيسية</a><span>/</span> مؤشر التغطية</nav>
+{% endblock %}
+{% block content %}
+<h1 class="section-title">مؤشر التغطية والشفافية</h1>
+
+<div class="notice info">
+  هذه الصفحة توضّح بدقة ما هو موثق وما يحتاج تحققاً. الموسوعة لا تدّعي احتواء جميع أعطال
+  العالم، ولا تعرض معلومة غير متحققة بوصفها حقيقة.
+</div>
+
+<section class="section">
+  <div class="grid grid-4">
+    <div class="card"><h3>مقالات منشورة</h3><p style="font-size:1.6rem;margin:0">{{ stats.published }}</p></div>
+    <div class="card"><h3>قيد المراجعة</h3><p style="font-size:1.6rem;margin:0">{{ stats.review }}</p></div>
+    <div class="card"><h3>موثقة بمصدر رسمي</h3><p style="font-size:1.6rem;margin:0">{{ stats.verified }}</p></div>
+    <div class="card"><h3>تحتاج إلى تحقق</h3><p style="font-size:1.6rem;margin:0">{{ stats.unverified }}</p></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">التغطية حسب الموديل</h2>
+  <table class="data">
+    <thead>
+      <tr><th>الموديل</th><th>منشورة</th><th>قيد المراجعة</th><th>موثقة</th><th>تحتاج تحققاً</th></tr>
+    </thead>
+    <tbody>
+      {% for row in per_model %}
+        <tr>
+          <td>{{ row.model.name_ar }}</td>
+          <td>{{ row.published }}</td>
+          <td>{{ row.review }}</td>
+          <td>{{ row.verified }}</td>
+          <td>{{ row.unverified }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="section">
+  <h2 class="section-title">تصنيفات لم تتوفر لها معلومات موثوقة بعد</h2>
+  {% if stats.empty_categories %}
+    <ul>
+      {% for cat in stats.empty_categories %}
+        <li>{{ cat.name_ar }} — لا توجد مقالات منشورة بعد.</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty">كل التصنيفات المعرفة تحتوي مقالات منشورة.</div>
+  {% endif %}
+</section>
+
+<section class="section">
+  <h2 class="section-title">مقالات موسومة «تحتاج إلى تحقق»</h2>
+  {% if unverified_list %}
+    <ul>
+      {% for fault in unverified_list %}
+        <li>
+          <a href="{{ url_for('public.fault_detail', slug=fault.slug) }}">{{ fault.title_ar }}</a>
+          — <span class="meta">{{ fault.model_names() }}</span>
+          {% if fault.source_needed %}<br><span class="help">{{ fault.source_needed }}</span>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty">لا توجد مقالات موسومة بهذه الحالة حالياً.</div>
+  {% endif %}
+</section>
+
+<section class="section">
+  <h2 class="section-title">مقالات قيد المراجعة</h2>
+  {% if review_list %}
+    <ul>
+      {% for fault in review_list %}
+        <li><a href="{{ url_for('public.fault_detail', slug=fault.slug) }}">{{ fault.title_ar }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty">لا توجد مقالات قيد المراجعة حالياً.</div>
+  {% endif %}
+</section>
+{% endblock %}
